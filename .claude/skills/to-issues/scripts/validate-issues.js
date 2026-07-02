@@ -95,9 +95,21 @@ if (!fs.existsSync(specPath)) {
   }
 }
 
+// Status summary and blocker report (printed on PASS and FAIL alike —
+// blocked work is invisible unless something surfaces it)
+const counts = {};
+for (const it of issues) {
+  const k = (it.meta.status || 'MISSING').split(':')[0].trim();
+  counts[k] = (counts[k] || 0) + 1;
+}
+const summary = Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(', ');
+const blocked = issues.filter((it) => (it.meta.status || '').startsWith('BLOCKED'));
+
 if (errors.length) {
   console.log('FAIL');
   for (const e of errors) console.log('- ' + e);
+  for (const it of blocked) console.log(`BLOCKED ${it.id}: ${it.meta.status.replace(/^BLOCKED:\s*/, '')}`);
   process.exit(1);
 }
-console.log(`PASS - ${issues.length} issues: numbering sequential, statuses legal, INDEX matches disk, all section 11 criteria covered`);
+console.log(`PASS - ${issues.length} issues (${summary}): numbering sequential, statuses legal, INDEX matches disk, all section 11 criteria covered`);
+for (const it of blocked) console.log(`BLOCKED ${it.id}: ${it.meta.status.replace(/^BLOCKED:\s*/, '')} -> run the unblock skill`);

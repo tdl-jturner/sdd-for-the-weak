@@ -15,6 +15,9 @@ accepted proof of done.
    all DONE (check their frontmatter too). If the user named an issue, take
    that one. Announce your pick. Set its frontmatter to
    `status: IN PROGRESS`, save, and verify the save by reading it back.
+   If NOTHING is eligible, do not invent work: list every BLOCKED issue
+   with its question and say "run the unblock skill to resolve these" (or,
+   if every issue is DONE, "run verify-feature"). Then stop.
 2. READ — Read your issue file in full, the spec sections it cites, and the
    files in its Files list. Read NOTHING else: not the other issue files, not
    the rest of the spec, not the wider codebase. A small model with a full

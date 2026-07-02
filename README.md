@@ -18,6 +18,7 @@ Anything misbehaves? ──▶ pipeline-feedback turns your complaint into a one
 | 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list) plus INDEX.md, checked by a validator script. | Fresh conversation |
 | 5 | `implement-issue` | Implements ONE issue test-first (red-green-refactor), records evidence in the issue's frontmatter, validator must pass. | Fresh conversation **per issue** |
 | 6 | `verify-feature` | Fresh-eyes conformance review: re-runs the suite, reads test bodies, traces code against every acceptance criterion. Changes nothing. | Fresh conversation |
+| — | `unblock` | Lists every BLOCKED issue and UNRESOLVED question, then resolves them one at a time with you, routing each answer into the right file. | Any time |
 | — | `diagnose-bug` | Post-ship debugging: reproduces the bug, classifies it (code bug / works-as-specified / spec gap), records a bug issue for implement-issue. Never fixes. | Fresh conversation |
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
 ## The state files
@@ -58,7 +59,10 @@ files above are the state that travels between steps; conversations are not.
    `node .claude/skills/to-issues/scripts/validate-issues.js specs/S1-<slug>`
 5. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
    frontmatter, implements it test-first inside its Files list, records
-   evidence, validator must pass. When none remain it points you at step 6.
+   evidence, validator must pass. When none remain it points you at step 6;
+   when work is stuck it lists what's BLOCKED and points you at `/unblock`,
+   which walks you through resolving every blocker and open question one at
+   a time (the validator also flags blocked issues in every run).
 6. Fresh session: `/verify-feature`. Re-runs everything itself and traces
    code against every acceptance criterion. Fixes become new decisions and
    new issues — never edits made during review.
