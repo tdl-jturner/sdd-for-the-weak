@@ -18,6 +18,7 @@ Anything misbehaves? ──▶ pipeline-feedback turns your complaint into a one
 | 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list) plus INDEX.md, checked by a validator script. | Fresh conversation |
 | 5 | `implement-issue` | Implements ONE issue test-first (red-green-refactor), records evidence in the issue's frontmatter, validator must pass. | Fresh conversation **per issue** |
 | 6 | `verify-feature` | Fresh-eyes conformance review: re-runs the suite, reads test bodies, traces code against every acceptance criterion. Changes nothing. | Fresh conversation |
+| — | `diagnose-bug` | Post-ship debugging: reproduces the bug, classifies it (code bug / works-as-specified / spec gap), records a bug issue for implement-issue. Never fixes. | Fresh conversation |
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
 ## The state files
 Each feature gets a numbered folder; one glossary is shared project-wide.
@@ -61,9 +62,14 @@ files above are the state that travels between steps; conversations are not.
 6. Fresh session: `/verify-feature`. Re-runs everything itself and traces
    code against every acceptance criterion. Fixes become new decisions and
    new issues — never edits made during review.
-When any step misbehaves, run `/pipeline-feedback` with what happened — it
-finds the rule that failed, proposes one minimal edit, and applies it only
-with your approval, logging to `.claude/skills/FEEDBACK.md`.
+When the built feature misbehaves later, run `/diagnose-bug`: it reproduces
+the problem, traces it against the spec, and classifies it — a code bug
+becomes a new bug issue (fixed via `/implement-issue`, whose failing test
+becomes the regression test); works-as-specified or a spec gap routes back
+to `/interview-me` for a decision. It never fixes anything itself.
+When any pipeline step misbehaves, run `/pipeline-feedback` with what
+happened — it finds the rule that failed, proposes one minimal edit, and
+applies it only with your approval, logging to `.claude/skills/FEEDBACK.md`.
 ## Multiple features and re-spec cycles
 - **DECISIONS.md is append-only, forever.** New requirements mid-build?
   Resume `/interview-me` — new decisions get new D-numbers, corrections
