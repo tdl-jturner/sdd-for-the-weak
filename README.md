@@ -3,6 +3,10 @@ A repeatable process for turning a vague feature idea into working, verified
 code, designed to be driven by inexpensive/weak LLMs: interview → spec →
 critique → sequential issues → test-first implementation → conformance
 review, one small step per conversation.
+
+Inspired by [mattpocock/skills](https://github.com/mattpocock/skills), whose
+alignment interviews, feedback-first development, and shared-glossary ideas
+this pipeline borrows and adapts for much weaker models.
 ## The pipeline
 ```
 Idea ──▶ 1 interview-me ──▶ DECISIONS.md ──▶ 2 to-spec ──▶ SPEC.md ──▶ 3 spec-critique ──▶ fixes
