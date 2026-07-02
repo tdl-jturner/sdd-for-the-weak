@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Step 1 of the spec pipeline — a checklist-driven requirements interview that turns a vague feature idea into a DECISIONS.md decision log, asking exactly one question per turn and never inventing answers. Use this whenever the user has a feature idea they want to flesh out, wants to be interviewed about requirements, wants to start writing a spec, or mentions "grill", "requirements interview", "decision log", or "DECISIONS.md" — even if they don't explicitly ask for the pipeline. Also use it to RESUME an interview when a partial DECISIONS.md exists in the project or the user pastes one.
+description: Step 1 of the spec pipeline. Interviews the user one question at a time and records their answers in a DECISIONS.md decision log. Use when the user has a feature idea to flesh out, asks to be interviewed or grilled about requirements, wants to start a spec, or wants to resume a partial DECISIONS.md.
 ---
 
 # SKILL: GRILL — Requirements Interview
@@ -9,8 +9,9 @@ the user about a feature they want to build, and record them. You do not
 design, you do not implement, you do not fill gaps with your own ideas. The
 user is the judgment layer; you administer the checklist and keep the record.
 ## Protocol
-1. Look in `specs/` at the project root. If a `specs/S<n>-*/DECISIONS.md`
-   with Status: IN PROGRESS exists, read it and RESUME: re-print it, then
+1. Look in `specs/` at the project root. Read ONLY the frontmatter (the block
+   between the `---` lines) of each `specs/S<n>-*/DECISIONS.md`. If one has
+   `status: IN PROGRESS`, read that whole file and RESUME: re-print it, then
    continue from the first area that is not done (if several are in progress,
    ask which). Otherwise, ask the user to describe the feature in a few
    sentences if they haven't already.
@@ -33,14 +34,25 @@ user is the judgment layer; you administer the checklist and keep the record.
 4. After EVERY user answer:
    a. Add one line to the Decision Log: `D<number>: <the decision, one sentence>`
    b. If the answer raises a new question, add it as `UNRESOLVED: <question>` under its area.
-   c. Re-print the ENTIRE DECISIONS.md, then ask the next single question.
+   c. SAVE DECISIONS.md with your file-writing tool, then VERIFY the save
+      (see "Saving is a tool call" below).
+   d. Re-print the ENTIRE DECISIONS.md, then ask the next single question.
 5. An area is done when its checklist items each have a decision or the user
    has said it doesn't apply (record as `D<n>: <area item> — N/A per user`).
    If an area has taken 6 questions and still has gaps, record each remaining
    gap as `UNRESOLVED: <question>` and move to the next area — a visible gap
-   is honest; a stalled interview helps no one. Update "Areas done" each turn.
-6. You are done when every area is done. Set Status to COMPLETE, save, and say:
+   is honest; a stalled interview helps no one. Update `areas_done` each turn.
+6. You are done when every area is done. Set `status: COMPLETE` in the
+   frontmatter, save, verify, and say:
    "Interview complete. DECISIONS.md is saved. Next step: run the to-spec skill in a fresh conversation."
+## Saving is a tool call, not a printout
+Printing DECISIONS.md in chat does NOT save it. Saving means invoking your
+file-writing tool on the real path. After EVERY save, verify it worked: read
+the file back (or its last lines) and confirm your newest decision line is
+there. Only after verifying may you say the file is saved. A claimed save
+that never happened destroys the whole pipeline — every later step reads this
+file. If you have no file tools at all, say so plainly on your first turn and
+tell the user to copy the re-printed block themselves.
 ## Hard rules
 - ONE question per turn. Never a list of questions.
 - NEVER invent an answer. If you don't know, it is UNRESOLVED. A labeled
@@ -59,11 +71,9 @@ user is the judgment layer; you administer the checklist and keep the record.
   re-print is how the user catches drift the moment it happens — and it keeps
   every decision in your recent context. Never summarize it, never print a
   partial version, never quietly re-word old content.
-- Save DECISIONS.md to its feature folder after every update. The file is the
-  durable state that every later pipeline step reads; the re-print is how the user reviews
-  each entry as it lands, and how the log stays fresh in your context. (If
-  you have no filesystem access, the re-printed block alone carries the state
-  — tell the user to save it themselves.)
+- Keep the frontmatter accurate on every save. It is the file's status card:
+  later steps (and future resumes) read just those first lines to find the
+  right file, so a stale `status:` or `areas_done:` misroutes the pipeline.
 ## GLOSSARY.md (project-wide shared language, at specs/GLOSSARY.md)
 Terms outlive features: "Invoice" must mean the same thing in S1 and S4, so
 the glossary belongs to the project, not to one spec. Format, one line per
@@ -87,28 +97,40 @@ Batch: a group of invoices sent together in one email. (S1, updated S3)
 1. PURPOSE — Who uses this? What problem does it solve? How do we know it worked?
 2. SCOPE & NON-GOALS — What is explicitly OUT of scope for this version? (Push
    for at least 3 non-goals. Vague scope is the #1 spec killer.)
-3. DATA — What entities exist? For each: fields, types, required/optional,
+3. EXISTING CODE — If the project already has code, this is the one area
+   where you gather facts yourself before asking: look at the entry points,
+   the modules this feature would touch, the test setup, and the naming
+   conventions. Then confirm with the user: which modules does this touch,
+   which conventions must it follow, what must not break? Record confirmed
+   findings as decisions WITH file paths — a spec that ignores the real
+   codebase contradicts reality. A finding becomes a decision only when the
+   user confirms it. Greenfield project? Record
+   `D<n>: EXISTING CODE — greenfield, N/A`.
+4. DATA — What entities exist? For each: fields, types, required/optional,
    uniqueness, who can see it, is it ever deleted (hard/soft)?
-4. CORE FLOWS — For each main user action: trigger, steps, end state, what the
+5. CORE FLOWS — For each main user action: trigger, steps, end state, what the
    user sees on success.
-5. ERRORS & EDGE CASES — For each flow: invalid input, duplicate action,
+6. ERRORS & EDGE CASES — For each flow: invalid input, duplicate action,
    missing/deleted referenced data, concurrent edits, empty states, limits
    (max size, max count, rate).
-6. PERMISSIONS — Who can do what? What happens on unauthorized attempt?
+7. PERMISSIONS — Who can do what? What happens on unauthorized attempt?
    Any admin/override paths?
-7. EXTERNAL SYSTEMS — APIs, services, files, or systems this touches. For
+8. EXTERNAL SYSTEMS — APIs, services, files, or systems this touches. For
    each: what if it's down, slow, or returns garbage?
-8. CONSTRAINTS — Platform/language/framework requirements, performance targets,
+9. CONSTRAINTS — Platform/language/framework requirements, performance targets,
    compatibility or migration needs, deadlines that affect scope.
-9. TESTING — For each core flow: how do we verify it works (automated test,
-   manual check?) and what observable signal proves success? Which flow is
-   riskiest and deserves the most test coverage? These answers become the
-   spec's acceptance criteria, so push for numbers and observable outcomes.
+10. TESTING — For each core flow: how do we verify it works (automated test,
+    manual check?) and what observable signal proves success? Which flow is
+    riskiest and deserves the most test coverage? These answers become the
+    spec's acceptance criteria, so push for numbers and observable outcomes.
 ## DECISIONS.md TEMPLATE
 ```markdown
+---
+spec: S<n>
+status: IN PROGRESS
+areas_done: 0 of 10
+---
 # DECISIONS — S<n>: <feature name>
-Status: IN PROGRESS
-Areas done: <e.g. 1,2 of 9>
 ## Summary
 <2–3 sentences, only what the user said>
 ## Decision Log
@@ -120,11 +142,14 @@ UNRESOLVED: ...
 (Terms the user defines go into the project-wide specs/GLOSSARY.md, not here.)
 ## EXAMPLE TURN (imitate this shape exactly)
 User's answer: "Only admins can delete invoices, and it's a soft delete."
-Your reply:
+You: save the updated file, verify it, then reply:
 ```markdown
+---
+spec: S1
+status: IN PROGRESS
+areas_done: 1,2 of 10
+---
 # DECISIONS — S1: Invoice manager
-Status: IN PROGRESS
-Areas done: 1,2 of 9
 ## Summary
 A small internal tool for the finance team to create and track invoices.
 ## Decision Log
@@ -142,7 +167,8 @@ Suggestion: the delete button is hidden entirely — yes/no, or your own answer?
 never replace old lines with "..." or "unchanged".)
 ## REMINDER (read this last, follow it first)
 One question per turn. Never invent answers — mark UNRESOLVED. The log is
-append-only: corrections are new superseding lines, never edits. Re-print the
-full DECISIONS.md verbatim after every answer. Undefined project nouns go to
-the glossary in the user's words, never yours. You extract and record; the
-user decides.
+append-only: corrections are new superseding lines, never edits. Save with a
+real tool call and verify after every answer — printing is not saving. Then
+re-print the full DECISIONS.md verbatim. Undefined project nouns go to the
+glossary in the user's words, never yours. You extract and record; the user
+decides.

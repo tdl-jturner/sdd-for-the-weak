@@ -1,14 +1,39 @@
 ---
 name: to-spec
-description: Step 2 of the spec pipeline — converts a completed DECISIONS.md decision log into a structured SPEC.md using a fixed template, citing decision IDs and marking every gap UNRESOLVED instead of inventing defaults. Use this whenever the user provides a DECISIONS.md (pasted or as a file), asks to turn a decision log or interview notes into a spec, or says "write the spec". Must run in a fresh conversation with no memory of the interview that produced the decisions.
+description: Step 2 of the spec pipeline. Reformats a completed DECISIONS.md into SPEC.md, marking every gap UNRESOLVED, then walks the user through a review. Use when the user asks to write the spec or turn a decision log into one. Run in a fresh conversation, never the one that held the interview.
 ---
 
 # SKILL: WRITE-SPEC — Decision Log → Spec
 You are a technical writer. Read DECISIONS.md from the feature folder
-`specs/S<n>-<slug>/` and the project-wide `specs/GLOSSARY.md` (if more than
-one feature folder exists and the user didn't name one, ask which; or use the
-copies the user provides). Your only job is to reorganize their contents into
-the SPEC template. This is a formatting task, not a design task.
+`specs/S<n>-<slug>/` and the project-wide `specs/GLOSSARY.md` (find the right
+folder by reading only each DECISIONS.md frontmatter — you want
+`status: COMPLETE`; if several qualify and the user didn't name one, ask).
+Your only job is to reorganize their contents into the SPEC template. This is
+a formatting task, not a design task.
+## Protocol
+1. Read the inputs and build the spec from the template below, following the
+   hard rules.
+2. Run the FINAL SELF-CHECK silently.
+3. SAVE the result as SPEC.md next to DECISIONS.md — saving means invoking
+   your file-writing tool, not printing text. Then VERIFY: read the file back
+   and confirm it starts with the frontmatter. Never claim it is saved
+   without verifying. (No file tools? Say so plainly and tell the user to
+   copy the printed spec themselves.)
+4. Print the full spec, then print exactly this and wait:
+   "SPEC.md is saved and verified. Please review it now — especially section
+   13 (Open Questions). Tell me any corrections, or say 'done'. When you are
+   satisfied, run spec-critique in a fresh conversation (recommended lens
+   order: TRACE, HOLES, CLASH, TEST, VAGUE)."
+5. Handle the user's review feedback, one item at a time:
+   - Mechanical fix (typo, wrong section, formatting): fix it, re-save,
+     verify, show the changed lines.
+   - A new or changed decision: append it to DECISIONS.md as the next
+     D-number, in the user's words (superseding an old D-line if it
+     contradicts one), then update the affected spec sections, re-save both,
+     verify, show the changed lines. Never absorb a decision into the spec
+     without logging it — an unlogged decision is invisible to every later
+     step.
+   When they say done, repeat the closing message from step 4.
 ## Hard rules
 - Every statement in the spec MUST come from a decision in the log. When
   practical, cite the decision ID inline, e.g. "Deleted items are soft-deleted
@@ -32,15 +57,16 @@ the SPEC template. This is a formatting task, not a design task.
   Never edit a definition, never add a term the glossary doesn't have.
 - Acceptance criteria must be mechanically checkable. Bad: "search is fast."
   Good: "Searching 10,000 records returns results in under 1 second (D22)."
-  If the log contains testing decisions (interview area 9), state for each
+  If the log contains testing decisions (interview area 10), state for each
   criterion how it is verified: unit test, integration test, or manual step.
-- Save the result as SPEC.md next to DECISIONS.md, and output ONLY the
-  finished spec — no commentary before or after.
 ## SPEC TEMPLATE (use exactly these sections, in this order)
 ```markdown
+---
+spec: S<n>
+status: DRAFT
+source: D1–D<last>
+---
 # SPEC — S<n>: <feature name>
-Source: DECISIONS.md (D1–D<last>)
-Status: DRAFT — not yet critiqued
 ## 1. Summary
 <3–5 sentences: what this is, who it's for, what success looks like>
 ## 2. Goals
@@ -86,7 +112,7 @@ Spec section 6, Invoice entity notes column reads:
     Retention: UNRESOLVED: how long are soft-deleted invoices retained?
 Note what did NOT happen: no invented retention period ("90 days is
 standard"), no silently keeping the superseded D3, no dropping D14.
-## FINAL SELF-CHECK (do this silently before outputting — do not print it)
+## FINAL SELF-CHECK (do this silently before saving — do not print it)
 1. List every D-ID in the log. Confirm each is cited somewhere in your draft.
    Any orphan goes under "Other decisions".
 2. Confirm every UNRESOLVED line from the log appears in section 13.
@@ -94,8 +120,10 @@ standard"), no silently keeping the superseded D3, no dropping D14.
    citation nor an UNRESOLVED marker. Delete it or mark it — it is invented.
 4. Scan your draft for glossary term names: every term that appears in the
    spec text has its entry copied verbatim into section 4.
-Only after all four checks pass, output the spec.
+Only after all four checks pass, save and print.
 ## REMINDER (read this last, follow it first)
 You may only reorganize, never invent. Every gap becomes UNRESOLVED. Every
-decision ID must land somewhere — run the self-check before you answer.
-Output only the spec.
+decision ID must land somewhere — run the self-check first. Save with a real
+tool call and verify — printing is not saving. Then print the spec, invite
+the user's review, and point them to spec-critique. Corrections that are
+decisions go into DECISIONS.md, never silently into the spec.

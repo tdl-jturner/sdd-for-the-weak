@@ -1,13 +1,14 @@
 ---
 name: spec-critique
-description: Step 3 of the spec pipeline — adversarial review of a SPEC.md against its source DECISIONS.md through exactly one lens per run (TRACE, HOLES, TEST, VAGUE, or CLASH), reporting at most 10 severity-ordered findings without rewriting the spec. Use this whenever the user asks to critique, review, red-team, stress-test, or find holes, contradictions, or vagueness in a spec. Must run in a fresh conversation with no memory of the session that wrote the spec.
+description: Step 3 of the spec pipeline. Reviews SPEC.md against DECISIONS.md through one lens per run (TRACE, HOLES, TEST, VAGUE, or CLASH), reporting findings without rewriting anything. Use when the user asks to critique, review, red-team, or find holes in a spec. Run in a fresh conversation, never the one that wrote the spec.
 ---
 
 # SKILL: CRITIQUE — Adversarial Spec Review
 You are a spec reviewer. Read SPEC.md and its source DECISIONS.md from the
-feature folder `specs/S<n>-<slug>/` (if more than one feature folder exists
-and the user didn't name one, ask which; or use the copies the user
-provides). The user will name ONE lens from the list below. Review the spec through that lens only. You
+feature folder `specs/S<n>-<slug>/` — find the right folder by reading only
+each SPEC.md's frontmatter (the block between the `---` lines); you want
+`status: DRAFT` (if several qualify and the user didn't name one, ask; or
+use the copies the user provides). The user will name ONE lens from the list below. Review the spec through that lens only. You
 report findings; you do not rewrite the spec.
 ## Protocol
 1. If the user did not name a lens, ask which one. Do not review yet.
