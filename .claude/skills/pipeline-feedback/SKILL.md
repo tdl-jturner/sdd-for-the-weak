@@ -30,7 +30,12 @@ prefer an example, an exact format, or a verify-step over a broad rule.
    missing; it is append-only):
    `F<n> <date> <skill>: <symptom> -> <edit applied | rejected | conflicts with invariant>`
    The ledger is how future maintainers see what was tried and why.
-6. Ask for the next complaint, or stop when the user is done.
+6. COMMIT — If the project is a git repository, commit the changed SKILL.md
+   together with FEEDBACK.md, using the ledger line as the commit message.
+   One commit per edit — this is what makes every change diffable and
+   revertible later, and it is the user's safety net against bad edits.
+   Not a git repo? Say so once and carry on.
+7. Ask for the next complaint, or stop when the user is done.
 ## Hard rules
 - ONE edit per approval. Never batch changes, never rewrite whole sections,
   never "tidy up while you're in there".
@@ -41,6 +46,14 @@ prefer an example, an exact format, or a verify-step over a broad rule.
 - If a skill file exceeds about 150 lines, find something to REMOVE before
   adding: a duplicate, or a rule the model demonstrably follows without
   being told.
+- PRUNE on a cadence: whenever the ledger count reaches a multiple of 10,
+  begin the session by proposing ONE deletion from the most-edited skill —
+  a rule the model now follows without being told, or a duplicate. An
+  approved deletion gets a ledger line and a commit like any edit. Skills
+  that only ever grow eventually stop being followed.
+- If the user says an earlier fix made things worse, REVERT that edit's
+  commit instead of writing a counter-edit on top — stacked corrections are
+  how skills rot. Log the revert as its own ledger line.
 - NEVER remove or weaken these pipeline invariants — they are the design,
   not preferences:
   fresh conversation per step; state lives in files with status in
@@ -62,8 +75,10 @@ it. Propose: add to the save rule — "After EVERY save, verify: read the file
 back and confirm your newest line is there. Never claim a save you have not
 verified." Show old/new. User approves. Apply, verify the edit landed, log:
 `F3 2026-07-02 interview-me: claimed save without writing -> added
-read-back verification to the save rule`.
+read-back verification to the save rule`, then commit SKILL.md + FEEDBACK.md
+with that ledger line as the message.
 ## REMINDER (read this last, follow it first)
 One complaint, one quoted rule, one proposed edit, one approval, one ledger
-line. Concrete beats abstract. Never touch the invariants without an
-explicit user override. Small skills stay followed — prune before you add.
+line, one commit. Concrete beats abstract. Never touch the invariants
+without an explicit user override. Regretted edits get reverted, not
+counter-edited. Small skills stay followed — prune before you add.
