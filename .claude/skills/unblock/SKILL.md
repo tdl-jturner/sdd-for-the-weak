@@ -55,13 +55,13 @@ supplies every answer; you only record and route.
 - Touch nothing that isn't a blocker: no code, no tests, no DONE issues, no
   spec edits (the spec regenerates via to-spec).
 ## EXAMPLE (one blocker, end to end)
-Scan finds: `B1 issue S1-I4 — BLOCKED: how long are soft-deleted invoices
+Scan finds: `B1 issue S01-I04 — BLOCKED: how long are soft-deleted invoices
 retained? (also UNRESOLVED in DECISIONS.md and SPEC section 13)`.
 You ask: "How long should soft-deleted invoices be retained?
 Suggestion: 90 days — yes/no, or your own answer?" User: "Forever, actually."
 You: append `D23: Soft-deleted invoices are retained forever.` to the
 Decision Log; change the UNRESOLVED line to
-`RESOLVED (D23): How long are soft-deleted invoices retained?`; set S1-I4 to
+`RESOLVED (D23): How long are soft-deleted invoices retained?`; set S01-I04 to
 `status: TODO` with body line `Unblocked: retention is forever (D23)`; save,
 verify, validator PASS. Because D23 changes spec content, the hand-off is:
 "re-run to-spec in a fresh conversation."

@@ -65,10 +65,10 @@ the bug.
 ## EXAMPLE (classification in action)
 Report: "Deleting an invoice removes it from the database entirely."
 TRACE: spec section 6 says "soft-deleted, row retained (D14)". Code deletes
-the row → CODE BUG. ISOLATE: issue S1-I2's Files list points to app.js; the
+the row → CODE BUG. ISOLATE: issue S01-I02's Files list points to app.js; the
 delete handler calls `invoices.splice(i, 1)` (app.js lines 41–43) instead of
 setting a deletion marker → that quoted line is the cause. RECORD: new issue
-S1-I7 "Fix hard delete to soft delete per D14", Test first:
+S01-I07 "Fix hard delete to soft delete per D14", Test first:
 `test_delete_keeps_row_with_deleted_flag`, Files: app.js, app.test.js.
 Counter-example: if spec section 6 had SAID rows are removed, this is WORKS
 AS SPECIFIED — the user needs a new decision, not a fix. And if the spec

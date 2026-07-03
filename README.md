@@ -36,12 +36,12 @@ your-project/
         ├── SPEC.md                  (derived, disposable)
         └── issues/
             ├── INDEX.md             (build order only)
-            ├── S1-I1-<slug>.md      (one file per issue)
-            └── S1-I2-<slug>.md
+            ├── S01-I01-<slug>.md      (one file per issue)
+            └── S01-I02-<slug>.md
 ```
 Every file carries YAML frontmatter with its status (`status: IN PROGRESS`,
 `status: DONE`, …) so a skill can find the right file by reading only the
-first few lines. Issue IDs (`S1-I2` = spec 1, issue 2) are permanent and
+first few lines. Issue IDs (`S01-I02` = spec 1, issue 2) are permanent and
 globally unique. One file per issue is deliberate: the implementer reads only
 its own issue, so the rest of the plan never tempts it to keep going.
 ## How to run it
@@ -60,7 +60,7 @@ files above are the state that travels between steps; conversations are not.
    step 2.
 4. Fresh session: `/to-issues`. Writes `issues/` and INDEX.md, then must show
    you a passing validator run:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S1-<slug>`
+   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S01-<slug>`
 5. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
    frontmatter, implements it test-first inside its Files list, records
    evidence, validator must pass. When none remain it points you at step 6;

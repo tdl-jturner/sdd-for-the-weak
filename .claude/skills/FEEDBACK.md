@@ -5,3 +5,4 @@ F3 2026-07-02 implement-issue: read every issue across all specs to pick the nex
 F4 2026-07-02 to-spec: SPEC.md status stayed DRAFT forever, nothing ever advanced it -> dropped the status field from the SPEC template (spec state lives only in issue frontmatter)
 F5 2026-07-02 spec-critique: found its spec by status DRAFT, which never flips - every spec qualified forever -> discovery is the highest-numbered folder in sort order, announced so the user can redirect
 F6 2026-07-02 validator: nothing enforced zero-padding, one unpadded id would silently corrupt sort order -> validator rejects unpadded ids and folder names
+F7 2026-07-02 unblock/diagnose-bug/README: example IDs still unpadded after scheme change; diagnose-bug mints IDs by imitating them -> padded every example ID
