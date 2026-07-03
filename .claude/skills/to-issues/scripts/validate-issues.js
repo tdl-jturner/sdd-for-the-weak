@@ -14,6 +14,12 @@ if (!dir || !fs.existsSync(dir)) {
 const issuesDir = path.join(dir, 'issues');
 const errors = [];
 
+// Zero-padding is load-bearing: alphabetical path sort must equal build order.
+const dirBase = path.basename(path.resolve(dir));
+if (!/^S\d{2}-/.test(dirBase)) {
+  errors.push(`feature folder "${dirBase}" is not zero-padded (expected S<nn>-<slug>, e.g. S01-invoices)`);
+}
+
 function frontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!m) return null;
@@ -42,9 +48,10 @@ for (const f of files) {
 }
 issues.sort((a, b) => a.n - b.n);
 
-// 1. IDs sequential from I1 — append-only numbering, never reused
+// 1. IDs sequential from I01 and zero-padded — append-only numbering, never reused
 issues.forEach((it, i) => {
-  if (it.n !== i + 1) errors.push(`numbering broken at ${it.id} (expected I${i + 1}): IDs must be sequential, never reused`);
+  if (!/^S\d{2}-I\d{2}$/.test(it.id)) errors.push(`${it.id}: id not zero-padded to two digits (expected S<nn>-I<mm>, e.g. S01-I02) — sort order depends on it`);
+  if (it.n !== i + 1) errors.push(`numbering broken at ${it.id} (expected I${String(i + 1).padStart(2, '0')}): IDs must be sequential, never reused`);
 });
 
 // 2. Legal statuses; DONE needs evidence; deps exist and point backward; max one IN PROGRESS
