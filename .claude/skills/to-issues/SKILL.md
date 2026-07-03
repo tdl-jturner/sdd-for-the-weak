@@ -4,10 +4,10 @@ description: Step 4 of the spec pipeline. Decomposes SPEC.md into an issues/ fol
 ---
 
 # SKILL: ISSUES — Spec → Sequential Issue Files
-You are a planner. Read SPEC.md from the feature folder `specs/S<n>-<slug>/`
+You are a planner. Read SPEC.md from the feature folder `specs/S<nn>-<slug>/`
 (if more than one feature folder exists and the user didn't name one, ask
 which). Your only job is to decompose the spec into ordered issues, written
-as ONE FILE PER ISSUE in `specs/S<n>-<slug>/issues/`, plus an INDEX.md
+as ONE FILE PER ISSUE in `specs/S<nn>-<slug>/issues/`, plus an INDEX.md
 listing the build order. You plan from the spec only — you do not design new
 behavior, and you do not write code.
 One file per issue is deliberate: the implementer reads only its own issue
@@ -22,11 +22,14 @@ die before the layers ever meet. The first issue is always the walking
 skeleton: the thinnest possible end-to-end path through the feature, proving
 the pieces connect.
 ## Issue IDs and filenames
-Issues are numbered `S<n>-I<m>`: the feature folder's S-number plus a
-sequential issue number, e.g. `S1-I2` is spec 1, issue 2. The next I-number
+Issues are numbered `S<nn>-I<mm>`: the feature folder's S-number plus a
+sequential issue number, BOTH zero-padded to two digits — `S01-I02` is spec
+1, issue 2. Padding is load-bearing: it makes a plain alphabetical sort of
+file paths identical to the build order, and later steps rely on that sort
+instead of reading files (unpadded, I10 sorts before I2). The next I-number
 is always the highest existing I-number plus one. IDs are permanent — never
-changed, never reused. Filename: `S<n>-I<m>-<short-slug>.md`, e.g.
-`issues/S1-I2-soft-delete-invoice.md`.
+changed, never reused. Filename: `S<nn>-I<mm>-<short-slug>.md`, e.g.
+`issues/S01-I02-soft-delete-invoice.md`.
 ## Hard rules
 - Every issue must cite the spec sections and the section 11 acceptance
   criteria it implements. An issue containing work the spec does not require
@@ -53,7 +56,7 @@ changed, never reused. Filename: `S<n>-I<m>-<short-slug>.md`, e.g.
   you claim exists is there. Only then report. Output a short summary (issue
   IDs + names), not the full file contents.
 - After saving, RUN the validator and paste its output:
-  `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
+  `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<nn>-<slug>`
   It deterministically checks numbering, statuses, INDEX-vs-disk, and
   criterion coverage — rules in prompts are probabilistic, the script is not.
   Fix every failure and re-run until it prints PASS. Never report success
@@ -61,24 +64,24 @@ changed, never reused. Filename: `S<n>-I<m>-<short-slug>.md`, e.g.
 ## Files to produce
 ### issues/INDEX.md — build order only (statuses live in the issue files)
 ```markdown
-# ISSUES INDEX — S<n>: <feature name>
+# ISSUES INDEX — S<nn>: <feature name>
 Source: SPEC.md
 Implement in this order. Current status is in each issue file's frontmatter.
-1. S<n>-I1-<slug>.md — <name>
-2. S<n>-I2-<slug>.md — <name>
+1. S<nn>-I01-<slug>.md — <name>
+2. S<nn>-I02-<slug>.md — <name>
 ## Open questions
 <criteria with no issue, issues blocked on UNRESOLVED items, anything the
 user must resolve before implementation>
 ```
-### issues/S<n>-I<m>-<slug>.md — one per issue
+### issues/S<nn>-I<mm>-<slug>.md — one per issue
 ```markdown
 ---
-id: S<n>-I<m>
+id: S<nn>-I<mm>
 status: TODO
-depends_on: none | S<n>-I<k>
+depends_on: none | S<nn>-I<kk>
 evidence: none
 ---
-# S<n>-I<m>: <name>
+# S<nn>-I<mm>: <name>
 Goal: <one sentence of observable behavior>
 Spec: sections <section numbers>
 Covers: <the section 11 acceptance criteria this issue implements, quoted>
@@ -89,12 +92,12 @@ Done when: <mechanically checkable statement>
 ## EXAMPLE ISSUE FILE (imitate this shape)
 ```markdown
 ---
-id: S1-I2
+id: S01-I02
 status: TODO
-depends_on: S1-I1
+depends_on: S01-I01
 evidence: none
 ---
-# S1-I2: Soft-delete an invoice
+# S01-I02: Soft-delete an invoice
 Goal: An admin can delete an invoice; it vanishes from lists but stays in the database.
 Spec: sections 6 (Invoice), 7 (Flow: Delete)
 Covers: "Deleting an invoice hides it from all lists (D14)"
@@ -115,11 +118,11 @@ only record of work already done — losing them means losing the build state.
   Write a NEW issue file (next I-number) for each criterion that is new or
   changed, and append it to INDEX.md.
 - If the new spec changes behavior a DONE issue already built, write a new
-  revision issue, e.g. `S1-I8: Revise soft-delete retention per D31`. Same
+  revision issue, e.g. `S01-I08: Revise soft-delete retention per D31`. Same
   move as a superseding decision: history stays, the correction is new.
-Example: issues S1-I1…I6 exist, I1–I4 DONE. New spec adds one criterion and
-changes retention behavior built by DONE issue S1-I2. Correct result: all six
-files untouched; new files S1-I7 (new criterion) and S1-I8 (revise retention
+Example: issues S01-I01…I06 exist, I01–I04 DONE. New spec adds one criterion and
+changes retention behavior built by DONE issue S01-I02. Correct result: all six
+files untouched; new files S01-I07 (new criterion) and S01-I08 (revise retention
 per D31); INDEX.md gains lines 7 and 8. Nothing renumbered, no status reset.
 ## FINAL SELF-CHECK (do this silently before reporting — do not print it)
 1. Every acceptance criterion in spec section 11 appears in some issue's
