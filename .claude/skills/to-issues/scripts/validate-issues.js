@@ -73,16 +73,9 @@ for (const it of issues) {
 }
 if (inProgress > 1) errors.push(`${inProgress} issues are IN PROGRESS — the maximum is 1`);
 
-// 3. INDEX.md lists exactly the files on disk, both directions
-const indexPath = path.join(issuesDir, 'INDEX.md');
-if (!fs.existsSync(indexPath)) {
-  errors.push('issues/INDEX.md is missing');
-} else {
-  const index = fs.readFileSync(indexPath, 'utf8');
-  for (const it of issues) if (!index.includes(it.f)) errors.push(`INDEX.md does not list ${it.f}`);
-  for (const m of index.matchAll(/S\d+-I\d+-[\w-]*\.md/g)) {
-    if (!files.includes(m[0])) errors.push(`INDEX.md lists ${m[0]} which is not on disk`);
-  }
+// 3. No INDEX.md — the concept was removed; sorted padded filenames ARE the build order
+if (fs.existsSync(path.join(issuesDir, 'INDEX.md'))) {
+  errors.push('issues/INDEX.md exists — the index concept was removed (sorted filenames are the build order); delete it');
 }
 
 // 4. Every SPEC section 11 criterion appears in some issue's Covers line
@@ -118,5 +111,5 @@ if (errors.length) {
   for (const it of blocked) console.log(`BLOCKED ${it.id}: ${it.meta.status.replace(/^BLOCKED:\s*/, '')}`);
   process.exit(1);
 }
-console.log(`PASS - ${issues.length} issues (${summary}): numbering sequential, statuses legal, INDEX matches disk, all section 11 criteria covered`);
+console.log(`PASS - ${issues.length} issues (${summary}): numbering sequential, statuses legal, all section 11 criteria covered`);
 for (const it of blocked) console.log(`BLOCKED ${it.id}: ${it.meta.status.replace(/^BLOCKED:\s*/, '')} -> run the unblock skill`);

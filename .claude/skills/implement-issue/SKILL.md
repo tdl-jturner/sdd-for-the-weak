@@ -79,7 +79,7 @@ accepted proof of done.
   call, verified by reading back — printing is not saving.
 - The issues/ folder is a ledger. Your issue file's frontmatter (status,
   evidence) and Files list are the only things in it you may change — never
-  touch INDEX.md or any other issue file.
+  touch any other issue file.
 - Name things in code after the glossary (spec section 4): if the spec calls
   it an Invoice, the code says invoice — never a synonym. The shared language
   runs from interview to identifiers; synonyms break the chain.

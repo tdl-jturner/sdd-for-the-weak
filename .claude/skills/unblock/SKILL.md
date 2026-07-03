@@ -15,9 +15,9 @@ supplies every answer; you only record and route.
    - every issue file whose frontmatter status starts with BLOCKED
      (read only frontmatter to find them),
    - the Unresolved section of DECISIONS.md,
-   - SPEC.md section 13 and INDEX.md Open questions.
+   - SPEC.md section 13 (Open Questions).
    The same question often appears in several places — that is ONE blocker.
-   DECISIONS.md is the source; SPEC and INDEX are derived from it and get
+   DECISIONS.md is the source; SPEC is derived from it and gets
    regenerated later. Print a numbered list: `B1 <where> — <question or
    error>`. If the list is empty, say so and point at the next pipeline step
    (implement-issue if TODO issues remain, verify-feature if all DONE).

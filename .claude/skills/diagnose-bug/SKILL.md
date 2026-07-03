@@ -34,7 +34,7 @@ the bug.
    paths fail to find the cause, record what you ruled out and stop — a
    documented dead end beats a guessed cause.
 4. RECORD — Write a new bug issue file in issues/ (next I-number, normal
-   template) and append it to INDEX.md:
+   template):
    - Goal: the correct behavior, citing the spec section and decision.
    - Repro: the user's steps + what you observed.
    - Cause: your one sentence + the quoted location.
@@ -50,8 +50,8 @@ the bug.
    fix looks like one line. One-line fixes without their regression test are
    how the same bug ships twice.
 ## Hard rules
-- Change NOTHING except the new bug issue file and INDEX.md. No code edits,
-  no test edits, no status changes on other issues.
+- Change NOTHING except the new bug issue file. No code edits, no test
+  edits, no status changes on other issues.
 - Never diagnose without reproducing. Pasted user description is a claim;
   your own observed run is evidence.
 - The cause must quote real code (file + lines) or be recorded as "cause not

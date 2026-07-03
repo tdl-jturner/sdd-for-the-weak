@@ -20,7 +20,7 @@ flowchart TD
     SPEC --> S3["3. /spec-critique"]
     S3 -- fixes, repeat per lens --> S2
     S3 -- final SPEC.md --> S4["4. /to-issues"]
-    S4 --> ISSUES["issues/*.md + INDEX.md"]
+    S4 --> ISSUES["issues/*.md"]
     ISSUES --> S5["5. /implement-issue"]
     S5 -- fresh session per issue, until none remain --> S5
     S5 --> S6["6. /verify-feature"]
@@ -35,7 +35,7 @@ flowchart TD
 | 1 | `interview-me` | Checklist-driven interview (10 areas, incl. EXISTING CODE and TESTING). One question per turn, logged into DECISIONS.md, saved and verified every answer. | One conversation, resumable |
 | 2 | `to-spec` | Converts DECISIONS.md into SPEC.md via a fixed template, then walks you through a review before handing off to critique. | Fresh conversation |
 | 3 | `spec-critique` | Adversarial review of SPEC.md against DECISIONS.md, one narrow lens at a time. | Fresh conversation, one lens per run |
-| 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list) plus INDEX.md, checked by a validator script. | Fresh conversation |
+| 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list), checked by a validator script. Sorted filenames are the build order. | Fresh conversation |
 | 5 | `implement-issue` | Implements ONE issue test-first (red-green-refactor), records evidence in the issue's frontmatter, validator must pass. | Fresh conversation **per issue** |
 | 6 | `verify-feature` | Fresh-eyes conformance review: re-runs the suite, reads test bodies, traces code against every acceptance criterion. Changes nothing. | Fresh conversation |
 | — | `unblock` | Lists every BLOCKED issue and UNRESOLVED question, then resolves them one at a time with you, routing each answer into the right file. | Any time |
@@ -51,9 +51,8 @@ your-project/
         ├── DECISIONS.md             (append-only decision log)
         ├── SPEC.md                  (derived, disposable)
         └── issues/
-            ├── INDEX.md             (build order only)
-            ├── S01-I01-<slug>.md      (one file per issue)
-            └── S01-I02-<slug>.md
+            ├── S01-I01-<slug>.md      (one file per issue;
+            └── S01-I02-<slug>.md       sorted names = build order)
 ```
 Every file carries YAML frontmatter with its status (`status: IN PROGRESS`,
 `status: DONE`, …) so a skill can find the right file by reading only the
@@ -74,7 +73,7 @@ files above are the state that travels between steps; conversations are not.
 3. Fresh session: `/spec-critique` with ONE lens (recommended order: TRACE,
    HOLES, CLASH, TEST, VAGUE). Repeat per lens. Resolve findings, re-run
    step 2.
-4. Fresh session: `/to-issues`. Writes `issues/` and INDEX.md, then must show
+4. Fresh session: `/to-issues`. Writes `issues/`, then must show
    you a passing validator run:
    `node .claude/skills/to-issues/scripts/validate-issues.js specs/S01-<slug>`
 5. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
