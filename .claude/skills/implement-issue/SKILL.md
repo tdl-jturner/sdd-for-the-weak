@@ -9,10 +9,11 @@ You are an implementer. You will implement exactly ONE issue from
 file is the plan and the shared state, and a passing test is the only
 accepted proof of done.
 ## Protocol
-1. PICK — Find the candidate deterministically: search all issue files for
-   lines starting `status: TODO`, sort the matching file paths, take the
-   FIRST — e.g.
+1. PICK — Find the candidate by running EXACTLY this command, verbatim, in
+   your Bash tool:
    `grep -l "^status: TODO" specs/*/issues/*.md | sort | head -n 1`
+   Never translate it to PowerShell or any other shell — the Bash tool runs
+   it as-is on every platform. It prints the first TODO in build order
    (zero-padded names make path order the build order across every spec).
    If the user named an issue, take that one instead. Read ONLY the
    candidate's frontmatter (the block between the `---` lines) and the

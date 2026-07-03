@@ -7,3 +7,4 @@ F5 2026-07-02 spec-critique: found its spec by status DRAFT, which never flips -
 F6 2026-07-02 validator: nothing enforced zero-padding, one unpadded id would silently corrupt sort order -> validator rejects unpadded ids and folder names
 F7 2026-07-02 unblock/diagnose-bug/README: example IDs still unpadded after scheme change; diagnose-bug mints IDs by imitating them -> padded every example ID
 F8 2026-07-02 migration: user explicitly overrode the never-rename ledger invariant for a one-time scheme change -> renamed 2 spec folders + 14 issue files to S<nn>-I<mm>, padded all id/depends_on/INDEX refs, stripped SPEC status lines; validator PASS on both specs after
+F9 2026-07-02 implement-issue: model translated the PICK grep into PowerShell and burned a run on a shell error -> command is now 'run EXACTLY this, verbatim, in your Bash tool', not an e.g.
