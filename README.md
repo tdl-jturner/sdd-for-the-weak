@@ -1,4 +1,4 @@
-# Spec Pipeline (Weak-Model Edition)
+# Spec Driven Design (Weak-Model Edition)
 A repeatable process for turning a vague feature idea into working, verified
 code, designed to be driven by inexpensive/weak LLMs: interview → spec →
 critique → sequential issues → test-first implementation → conformance
@@ -7,12 +7,28 @@ review, one small step per conversation.
 Inspired by [mattpocock/skills](https://github.com/mattpocock/skills), whose
 alignment interviews, feedback-first development, and shared-glossary ideas
 this pipeline borrows and adapts for much weaker models.
+
+Implementation by Fable 5 and validated with Haiku 4.5.
+
 ## The pipeline
-```
-Idea ──▶ 1 interview-me ──▶ DECISIONS.md ──▶ 2 to-spec ──▶ SPEC.md ──▶ 3 spec-critique ──▶ fixes
-final SPEC.md ──▶ 4 to-issues ──▶ issues/*.md ──▶ 5 implement-issue (one per session) ──▶ 6 verify-feature
-                                                                                            (conformance)
-Anything misbehaves? ──▶ pipeline-feedback turns your complaint into a one-line skill fix.
+```mermaid
+flowchart TD
+    Idea([Idea]) --> S1["1. /interview-me"]
+    S1 --> D[DECISIONS.md]
+    D --> S2["2. /to-spec"]
+    S2 --> SPEC[SPEC.md]
+    SPEC --> S3["3. /spec-critique"]
+    S3 -- fixes, repeat per lens --> S2
+    S3 -- final SPEC.md --> S4["4. /to-issues"]
+    S4 --> ISSUES["issues/*.md + INDEX.md"]
+    ISSUES --> S5["5. /implement-issue"]
+    S5 -- fresh session per issue, until none remain --> S5
+    S5 --> S6["6. /verify-feature"]
+    S6 --> CONF([conformance report])
+
+    UB["/unblock"] -.->|BLOCKED issues / UNRESOLVED questions| ISSUES
+    DB["/diagnose-bug"] -.->|feature misbehaves post-ship| ISSUES
+    PF["/pipeline-feedback"] -.->|a skill misbehaves| SKILLS[(any skill)]
 ```
 | Step | Skill | What it does | Context rule |
 |------|-------|--------------|--------------|
