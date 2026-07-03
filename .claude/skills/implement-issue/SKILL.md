@@ -5,17 +5,22 @@ description: Step 5 of the spec pipeline. Implements exactly ONE issue from the 
 
 # SKILL: IMPLEMENT — One Issue, Test-First
 You are an implementer. You will implement exactly ONE issue from
-`specs/S<n>-<slug>/issues/` in this conversation. The spec is law, the issue
+`specs/S<nn>-<slug>/issues/` in this conversation. The spec is law, the issue
 file is the plan and the shared state, and a passing test is the only
 accepted proof of done.
 ## Protocol
-1. PICK — Read `issues/INDEX.md` for the build order. In that order, read
-   ONLY the frontmatter (the block between the `---` lines) of each issue
-   file until you find the first `status: TODO` whose depends_on issues are
-   all DONE (check their frontmatter too). If the user named an issue, take
-   that one. Announce your pick. Set its frontmatter to
+1. PICK — Find the candidate deterministically: search all issue files for
+   lines starting `status: TODO`, sort the matching file paths, take the
+   FIRST — e.g.
+   `grep -l "^status: TODO" specs/*/issues/*.md | sort | head -n 1`
+   (zero-padded names make path order the build order across every spec).
+   If the user named an issue, take that one instead. Read ONLY the
+   candidate's frontmatter (the block between the `---` lines) and the
+   frontmatter of its depends_on issues: every dep must be DONE. Announce
+   your pick. Set its frontmatter to
    `status: IN PROGRESS`, save, and verify the save by reading it back.
-   If NOTHING is eligible, do not invent work: list every BLOCKED issue
+   If a dep is not DONE, or the search finds no TODO at all, do not invent
+   work: list every BLOCKED issue
    with its question and say "run the unblock skill to resolve these" (or,
    if every issue is DONE, "run verify-feature"). Then stop.
 2. READ — Read your issue file in full, the spec sections it cites, and the
@@ -36,10 +41,10 @@ accepted proof of done.
 6. RECORD — Update your issue file's frontmatter: `status: DONE` and
    `evidence: <test names + the suite's summary line>`. Save and verify by
    reading the frontmatter back. Then run the validator and paste its output:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
+   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<nn>-<slug>`
    It must print PASS — it deterministically catches ledger damage your own
    check would miss. Fix any failure before stopping.
-7. STOP — Say: "Issue S<n>-I<m> done. Next: run implement-issue in a fresh
+7. STOP — Say: "Issue S<nn>-I<mm> done. Next: run implement-issue in a fresh
    conversation for the next issue." If no TODO issues remain, say instead:
    "All issues done. Next: run verify-feature in a fresh conversation." Then
    END. Implementing a second issue in this conversation is a FAILURE even if
@@ -80,18 +85,19 @@ accepted proof of done.
 ## EXAMPLE RECORD (imitate this shape — frontmatter after step 6)
 ```markdown
 ---
-id: S1-I2
+id: S01-I02
 status: DONE
-depends_on: S1-I1
+depends_on: S01-I01
 evidence: test_delete_invoice_hides_from_list_but_keeps_row; full suite "14 passed in 2.1s"
 ---
-# S1-I2: Soft-delete an invoice
+# S01-I02: Soft-delete an invoice
 ...body unchanged...
 ```
 Note the shape: only status and evidence changed; the body is untouched. The
 evidence names the test and quotes the runner's summary line.
 ## REMINDER (read this last, follow it first)
-Pick by frontmatter, read only your own issue. Red before green — watch the
+Pick the first TODO in sorted path order, read only your own issue. Red
+before green — watch the
 test fail first. Minimum code to pass. Full suite every time. Never weaken a
 test. Stay inside the Files list. Three strikes, then BLOCKED. Evidence or it
 didn't happen. One issue, then STOP — a second issue in this conversation is
