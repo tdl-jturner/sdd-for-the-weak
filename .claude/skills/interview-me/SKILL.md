@@ -102,10 +102,13 @@ Batch: a group of invoices sent together in one email. (S1, updated S3)
 3. EXISTING CODE — If the project already has code, this is the one area
    where you gather facts yourself before asking: look at the entry points,
    the modules this feature would touch, the test setup, and the naming
-   conventions. Then confirm with the user: which modules does this touch,
-   which conventions must it follow, what must not break? Record confirmed
-   findings as decisions WITH file paths — a spec that ignores the real
-   codebase contradicts reality. A finding becomes a decision only when the
+   conventions. NEVER ask the user which files or functions to change — the
+   user may never have read the code; research it yourself. Every question
+   in this area presents YOUR finding for a yes/no: "This looks like it
+   lives in the move logic in game.js; the UI must not change — correct?"
+   The user confirms behavior and constraints, never code internals. Record
+   confirmed findings as decisions WITH file paths — a spec that ignores the
+   real codebase contradicts reality. A finding becomes a decision only when the
    user confirms it. Greenfield project? Record
    `D<n>: EXISTING CODE — greenfield, N/A`.
 4. DATA — What entities exist? For each: fields, types, required/optional,
@@ -164,9 +167,6 @@ UNRESOLVED: How long are soft-deleted invoices retained?
 ```
 Next question: What does a non-admin see when they try to delete an invoice?
 Suggestion: the delete button is hidden entirely — yes/no, or your own answer?
-
-(The example re-print is complete. Yours must be too — never abbreviate it,
-never replace old lines with "..." or "unchanged".)
 ## REMINDER (read this last, follow it first)
 One question per turn. Never invent answers — mark UNRESOLVED. The log is
 append-only: corrections are new superseding lines, never edits. Save with a
