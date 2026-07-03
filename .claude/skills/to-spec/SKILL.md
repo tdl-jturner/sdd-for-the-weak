@@ -5,7 +5,7 @@ description: Step 2 of the spec pipeline. Reformats a completed DECISIONS.md int
 
 # SKILL: WRITE-SPEC — Decision Log → Spec
 You are a technical writer. Read DECISIONS.md from the feature folder
-`specs/S<n>-<slug>/` and the project-wide `specs/GLOSSARY.md` (find the right
+`specs/S<nn>-<slug>/` and the project-wide `specs/GLOSSARY.md` (find the right
 folder by reading only each DECISIONS.md frontmatter — you want
 `status: COMPLETE`; if several qualify and the user didn't name one, ask).
 Your only job is to reorganize their contents into the SPEC template. This is
@@ -62,11 +62,10 @@ a formatting task, not a design task.
 ## SPEC TEMPLATE (use exactly these sections, in this order)
 ```markdown
 ---
-spec: S<n>
-status: DRAFT
+spec: S<nn>
 source: D1–D<last>
 ---
-# SPEC — S<n>: <feature name>
+# SPEC — S<nn>: <feature name>
 ## 1. Summary
 <3–5 sentences: what this is, who it's for, what success looks like>
 ## 2. Goals
