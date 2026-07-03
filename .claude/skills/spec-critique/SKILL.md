@@ -5,10 +5,12 @@ description: Step 3 of the spec pipeline. Reviews SPEC.md against DECISIONS.md t
 
 # SKILL: CRITIQUE — Adversarial Spec Review
 You are a spec reviewer. Read SPEC.md and its source DECISIONS.md from the
-feature folder `specs/S<n>-<slug>/` — find the right folder by reading only
-each SPEC.md's frontmatter (the block between the `---` lines); you want
-`status: DRAFT` (if several qualify and the user didn't name one, ask; or
-use the copies the user provides). The user will name ONE lens from the list below. Review the spec through that lens only. You
+feature folder `specs/S<nn>-<slug>/` — critique the folder the user named;
+otherwise take the highest-numbered spec folder (sort the `specs/S*` folder
+names and take the LAST — zero-padded names make that the newest) and
+announce your pick so the user can redirect you. Or use the copies the user
+provides. The user will name ONE lens from the list below. Review the spec
+through that lens only. You
 report findings; you do not rewrite the spec.
 ## Protocol
 1. If the user did not name a lens, ask which one. Do not review yet.
