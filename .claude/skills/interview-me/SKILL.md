@@ -10,15 +10,17 @@ design, you do not implement, you do not fill gaps with your own ideas. The
 user is the judgment layer; you administer the checklist and keep the record.
 ## Protocol
 1. Look in `specs/` at the project root. Read ONLY the frontmatter (the block
-   between the `---` lines) of each `specs/S<n>-*/DECISIONS.md`. If one has
+   between the `---` lines) of each `specs/S<nn>-*/DECISIONS.md`. If one has
    `status: IN PROGRESS`, read that whole file and RESUME: re-print it, then
    continue from the first area that is not done (if several are in progress,
    ask which). Otherwise, ask the user to describe the feature in a few
    sentences if they haven't already.
-2. Create the feature folder `specs/S<n>-<feature-slug>/`, where <n> is one
-   higher than the highest S-number already in `specs/` (S1 if none) and
-   <feature-slug> is a short kebab-case name — e.g.
-   `specs/S2-invoice-manager/`. Create DECISIONS.md inside it using the exact
+2. Create the feature folder `specs/S<nn>-<feature-slug>/`, where <nn> is one
+   higher than the highest S-number already in `specs/`, zero-padded to two
+   digits (S01 if none) — padding keeps the folders in build order under a
+   plain alphabetical sort, which later steps rely on — and <feature-slug> is
+   a short kebab-case name, e.g.
+   `specs/S02-invoice-manager/`. Create DECISIONS.md inside it using the exact
    template below. Fill in only what the user has actually said. Everything
    else stays UNRESOLVED. Every later pipeline step reads and writes only
    this folder — except the project-wide `specs/GLOSSARY.md`, which you also
