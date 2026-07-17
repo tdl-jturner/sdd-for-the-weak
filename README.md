@@ -43,6 +43,7 @@ flowchart TD
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
 | — | `interview-me` | The interview engine behind step 1, unbundled: hand it any checklist file and it builds an append-only decision log for that topic (plans, migrations, purchases — anything). `spec-design` is this engine bound to `specs/`. | One conversation, resumable |
 | — | `populate-template` | The reformatting engine behind step 2, unbundled: hand it a completed decision log and any document template and it fills the template strictly from the log, gaps marked UNRESOLVED. `to-spec` is this engine bound to the SPEC template. | Fresh conversation |
+| — | `lens-critique` | The review engine behind step 3, unbundled: hand it a decision-log-derived document and lens definitions and it reports evidence-quoted findings through one lens per run. `spec-critique` is this engine bound to the five spec lenses. | Fresh conversation, one lens per run |
 ## The state files
 Each feature gets a numbered folder; one glossary is shared project-wide.
 ```
