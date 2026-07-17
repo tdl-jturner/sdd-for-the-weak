@@ -42,6 +42,7 @@ flowchart TD
 | — | `diagnose-bug` | Post-ship debugging: reproduces the bug, classifies it (code bug / works-as-specified / spec gap), records a bug issue for implement-issue. Never fixes. | Fresh conversation |
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
 | — | `interview-me` | The interview engine behind step 1, unbundled: hand it any checklist file and it builds an append-only decision log for that topic (plans, migrations, purchases — anything). `spec-design` is this engine bound to `specs/`. | One conversation, resumable |
+| — | `populate-template` | The reformatting engine behind step 2, unbundled: hand it a completed decision log and any document template and it fills the template strictly from the log, gaps marked UNRESOLVED. `to-spec` is this engine bound to the SPEC template. | Fresh conversation |
 ## The state files
 Each feature gets a numbered folder; one glossary is shared project-wide.
 ```
