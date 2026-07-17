@@ -24,9 +24,9 @@ the bug.
    - CODE BUG — the spec says X, the code does Y.
    - WORKS AS SPECIFIED — the code does what the spec says; the user wants
      different behavior. That is a decision change, not a bug: send them to
-     interview-me to record it, then to-spec and to-issues. Stop here.
+     spec-design to record it, then to-spec and to-issues. Stop here.
    - SPEC GAP — the spec is silent on this case. Never invent the intended
-     behavior: send them to interview-me to decide it. Stop here.
+     behavior: send them to spec-design to decide it. Stop here.
 3. ISOLATE (code bugs only) — Find which issue built the behavior: check
    the issues/ folder's Covers and Files lines and evidence. Read only the
    files that issue touched. State the cause in ONE sentence and QUOTE the
@@ -72,7 +72,7 @@ S01-I07 "Fix hard delete to soft delete per D14", Test first:
 `test_delete_keeps_row_with_deleted_flag`, Files: app.js, app.test.js.
 Counter-example: if spec section 6 had SAID rows are removed, this is WORKS
 AS SPECIFIED — the user needs a new decision, not a fix. And if the spec
-never mentioned deletion persistence at all: SPEC GAP → interview-me.
+never mentioned deletion persistence at all: SPEC GAP → spec-design.
 ## REMINDER (read this last, follow it first)
 Reproduce it yourself, classify it (bug / as-specified / gap), quote the
 cause or admit you didn't find it, record it as the next issue, validator

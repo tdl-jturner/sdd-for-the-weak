@@ -13,7 +13,7 @@ Implementation by Fable 5 and validated with Haiku 4.5.
 ## The pipeline
 ```mermaid
 flowchart TD
-    Idea([Idea]) --> S1["1. /interview-me"]
+    Idea([Idea]) --> S1["1. /spec-design"]
     S1 --> D[DECISIONS.md]
     D --> S2["2. /to-spec"]
     S2 --> SPEC[SPEC.md]
@@ -32,7 +32,7 @@ flowchart TD
 ```
 | Step | Skill | What it does | Context rule |
 |------|-------|--------------|--------------|
-| 1 | `interview-me` | Checklist-driven interview (10 areas, incl. EXISTING CODE and TESTING). One question per turn, logged into DECISIONS.md, saved and verified every answer. | One conversation, resumable |
+| 1 | `spec-design` | Checklist-driven interview (10 areas, incl. EXISTING CODE and TESTING). One question per turn, logged into DECISIONS.md, saved and verified every answer. | One conversation, resumable |
 | 2 | `to-spec` | Converts DECISIONS.md into SPEC.md via a fixed template, then walks you through a review before handing off to critique. | Fresh conversation |
 | 3 | `spec-critique` | Adversarial review of SPEC.md against DECISIONS.md, one narrow lens at a time. | Fresh conversation, one lens per run |
 | 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list), checked by a validator script. Sorted filenames are the build order. | Fresh conversation |
@@ -41,6 +41,7 @@ flowchart TD
 | — | `unblock` | Lists every BLOCKED issue and UNRESOLVED question, then resolves them one at a time with you, routing each answer into the right file. | Any time |
 | — | `diagnose-bug` | Post-ship debugging: reproduces the bug, classifies it (code bug / works-as-specified / spec gap), records a bug issue for implement-issue. Never fixes. | Fresh conversation |
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
+| — | `interview-me` | The interview engine behind step 1, unbundled: hand it any checklist file and it builds an append-only decision log for that topic (plans, migrations, purchases — anything). `spec-design` is this engine bound to `specs/`. | One conversation, resumable |
 ## The state files
 Each feature gets a numbered folder; one glossary is shared project-wide.
 ```
@@ -63,7 +64,7 @@ its own issue, so the rest of the plan never tempts it to keep going.
 Install once: copy the skill folders into your agent's skills directory
 (`.claude/skills/` in the project, or `~/.claude/skills/` globally). The
 files above are the state that travels between steps; conversations are not.
-1. Invoke `/interview-me` with your feature idea. One question per turn; it
+1. Invoke `/spec-design` with your feature idea. One question per turn; it
    saves DECISIONS.md after every answer and verifies the save (printing is
    not saving). It inspects existing code for the EXISTING CODE area, and
    grows `specs/GLOSSARY.md` from terms you define.
@@ -89,13 +90,13 @@ When the built feature misbehaves later, run `/diagnose-bug`: it reproduces
 the problem, traces it against the spec, and classifies it — a code bug
 becomes a new bug issue (fixed via `/implement-issue`, whose failing test
 becomes the regression test); works-as-specified or a spec gap routes back
-to `/interview-me` for a decision. It never fixes anything itself.
+to `/spec-design` for a decision. It never fixes anything itself.
 When any pipeline step misbehaves, run `/pipeline-feedback` with what
 happened — it finds the rule that failed, proposes one minimal edit, and
 applies it only with your approval, logging to `.claude/skills/FEEDBACK.md`.
 ## Multiple features and re-spec cycles
 - **DECISIONS.md is append-only, forever.** New requirements mid-build?
-  Resume `/interview-me` — new decisions get new D-numbers, corrections
+  Resume `/spec-design` — new decisions get new D-numbers, corrections
   supersede old lines.
 - **SPEC.md is disposable.** Derived entirely from DECISIONS.md; re-running
   `/to-spec` loses nothing.

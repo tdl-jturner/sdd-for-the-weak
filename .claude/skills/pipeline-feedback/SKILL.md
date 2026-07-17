@@ -68,13 +68,14 @@ prefer an example, an exact format, or a verify-step over a broad rule.
 - Praise is signal too: if the user says something worked well, log it and
   leave the skill alone. Do not fix what works.
 ## EXAMPLE (one full cycle)
-User: "interview-me said it saved DECISIONS.md but never wrote the file."
-You: Quote the save rule from interview-me. Diagnose: the rule says to save
+User: "spec-design said it saved DECISIONS.md but never wrote the file."
+You: Quote the save rule from the protocol spec-design runs on
+(interview-me's PROTOCOL.md). Diagnose: the rule says to save
 but never demands proof, so a weak model narrates the save instead of doing
 it. Propose: add to the save rule — "After EVERY save, verify: read the file
 back and confirm your newest line is there. Never claim a save you have not
 verified." Show old/new. User approves. Apply, verify the edit landed, log:
-`F3 2026-07-02 interview-me: claimed save without writing -> added
+`F3 2026-07-02 spec-design: claimed save without writing -> added
 read-back verification to the save rule`, then commit SKILL.md + FEEDBACK.md
 with that ledger line as the message.
 ## REMINDER (read this last, follow it first)

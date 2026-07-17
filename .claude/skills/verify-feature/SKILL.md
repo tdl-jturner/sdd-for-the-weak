@@ -55,7 +55,7 @@ Suggested action: <one sentence, or "user must decide: <question>">
 - [ ] <criterion>: <exact steps the user performs by hand>
 ```
 After the findings, print exactly this line and stop:
-"To fix: record any new decisions via interview-me, re-run to-spec and
+"To fix: record any new decisions via spec-design, re-run to-spec and
 to-issues as needed, then implement-issue for the new issues. Re-run
 verify-feature when done."
 ## Hard rules
