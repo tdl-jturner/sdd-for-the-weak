@@ -13,12 +13,11 @@ Implementation by Fable 5 and validated with Haiku 4.5.
 ## The pipeline
 ```mermaid
 flowchart TD
-    Idea([Idea]) --> S1["1. /spec-design"]
+    Idea([Idea]) --> S1["1–2. /spec-design"]
     S1 --> D[DECISIONS.md]
-    D --> S2["2. /to-spec"]
-    S2 --> SPEC[SPEC.md]
+    D --> SPEC[SPEC.md]
     SPEC --> S3["3. /spec-critique"]
-    S3 -- fixes, repeat per lens --> S2
+    S3 -- fixes, repeat per lens --> S1
     S3 -- final SPEC.md --> S4["4. /to-issues"]
     S4 --> ISSUES["issues/*.md"]
     ISSUES --> S5["5. /implement-issue"]
@@ -32,8 +31,7 @@ flowchart TD
 ```
 | Step | Skill | What it does | Context rule |
 |------|-------|--------------|--------------|
-| 1 | `spec-design` | Checklist-driven interview (10 areas, incl. EXISTING CODE and TESTING). One question per turn, logged into DECISIONS.md, saved and verified every answer. | One conversation, resumable |
-| 2 | `to-spec` | Converts DECISIONS.md into SPEC.md via a fixed template, then walks you through a review before handing off to critique. | Fresh conversation |
+| 1–2 | `spec-design` | Interview then spec, from one template with embedded coverage (`?`) and rules (`!`). One question per turn into DECISIONS.md, saved and verified every answer; then writes SPEC.md strictly from the re-read log and walks you through a review. | Interview resumable; spec may follow in-session or fresh |
 | 3 | `spec-critique` | Adversarial review of SPEC.md against DECISIONS.md, one narrow lens at a time. | Fresh conversation, one lens per run |
 | 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list), checked by a validator script. Sorted filenames are the build order. | Fresh conversation |
 | 5 | `implement-issue` | Implements ONE issue test-first (red-green-refactor), records evidence in the issue's frontmatter, validator must pass. | Fresh conversation **per issue** |
@@ -41,8 +39,8 @@ flowchart TD
 | — | `unblock` | Lists every BLOCKED issue and UNRESOLVED question, then resolves them one at a time with you, routing each answer into the right file. | Any time |
 | — | `diagnose-bug` | Post-ship debugging: reproduces the bug, classifies it (code bug / works-as-specified / spec gap), records a bug issue for implement-issue. Never fixes. | Fresh conversation |
 | — | `pipeline-feedback` | Maintenance loop: one complaint → one quoted rule → one approved minimal edit → append-only FEEDBACK.md ledger. | Any time |
-| — | `interview-me` | The interview engine behind step 1, unbundled: hand it any checklist file and it builds an append-only decision log for that topic (plans, migrations, purchases — anything). `spec-design` is this engine bound to `specs/`. | One conversation, resumable |
-| — | `populate-template` | The reformatting engine behind step 2, unbundled: hand it a completed decision log and any document template and it fills the template strictly from the log, gaps marked UNRESOLVED. `to-spec` is this engine bound to the SPEC template. | Fresh conversation |
+| — | `interview-me` | The interview engine behind step 1, unbundled: hand it an interview template (any document template with embedded `?` coverage items — or bare sections of `?` items alone) and it builds an append-only decision log for that topic (plans, migrations, purchases — anything). `spec-design` is this engine bound to `specs/`. | One conversation, resumable |
+| — | `populate-template` | The reformatting engine behind step 2, unbundled: hand it a completed decision log and any document template and it fills the template strictly from the log, gaps marked UNRESOLVED. `spec-design` is this engine bound to the SPEC template. | Fresh conversation |
 | — | `lens-critique` | The review engine behind step 3, unbundled: hand it a decision-log-derived document and lens definitions and it reports evidence-quoted findings through one lens per run. `spec-critique` is this engine bound to the five spec lenses. | Fresh conversation, one lens per run |
 ## The state files
 Each feature gets a numbered folder; one glossary is shared project-wide.
@@ -68,24 +66,26 @@ Install once: copy the skill folders into your agent's skills directory
 files above are the state that travels between steps; conversations are not.
 1. Invoke `/spec-design` with your feature idea. One question per turn; it
    saves DECISIONS.md after every answer and verifies the save (printing is
-   not saving). It inspects existing code for the EXISTING CODE area, and
-   grows `specs/GLOSSARY.md` from terms you define.
-2. Fresh session: `/to-spec`. Reads DECISIONS.md, writes SPEC.md, then asks
-   you to review before pointing you at critique. Corrections that are
-   decisions get logged, never silently absorbed.
-3. Fresh session: `/spec-critique` with ONE lens (recommended order: TRACE,
-   HOLES, CLASH, TEST, VAGUE). Repeat per lens. Resolve findings, re-run
-   step 2.
-4. Fresh session: `/to-issues`. Writes `issues/`, then must show
+   not saving). It inspects existing code for the Existing Code block, and
+   grows `specs/GLOSSARY.md` from terms you define. When the interview
+   completes, say "write the spec" (or run `/spec-design` fresh): it
+   re-reads DECISIONS.md from disk and writes SPEC.md strictly from the
+   file, then asks you to review. Corrections that are decisions get
+   logged, never silently absorbed.
+2. Fresh session: `/spec-critique` with ONE lens (recommended order: TRACE,
+   HOLES, CLASH, TEST, VAGUE). Repeat per lens. Resolve findings, rewrite
+   the spec via `/spec-design`.
+3. Fresh session: `/to-issues`. Writes `issues/`, then must show
    you a passing validator run:
    `node .claude/skills/to-issues/scripts/validate-issues.js specs/S01-<slug>`
-5. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
+4. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
    frontmatter, implements it test-first inside its Files list, records
-   evidence, validator must pass. When none remain it points you at step 6;
-   when work is stuck it lists what's BLOCKED and points you at `/unblock`,
-   which walks you through resolving every blocker and open question one at
-   a time (the validator also flags blocked issues in every run).
-6. Fresh session: `/verify-feature`. Re-runs everything itself and traces
+   evidence, validator must pass. When none remain it points you at the
+   verify step; when work is stuck it lists what's BLOCKED and points you at
+   `/unblock`, which walks you through resolving every blocker and open
+   question one at a time (the validator also flags blocked issues in every
+   run).
+5. Fresh session: `/verify-feature`. Re-runs everything itself and traces
    code against every acceptance criterion. Fixes become new decisions and
    new issues — never edits made during review.
 When the built feature misbehaves later, run `/diagnose-bug`: it reproduces
@@ -100,8 +100,8 @@ applies it only with your approval, logging to `.claude/skills/FEEDBACK.md`.
 - **DECISIONS.md is append-only, forever.** New requirements mid-build?
   Resume `/spec-design` — new decisions get new D-numbers, corrections
   supersede old lines.
-- **SPEC.md is disposable.** Derived entirely from DECISIONS.md; re-running
-  `/to-spec` loses nothing.
+- **SPEC.md is disposable.** Derived entirely from DECISIONS.md; rewriting
+  it via `/spec-design` loses nothing.
 - **The issues/ folder is an append-only ledger.** Frontmatter statuses and
   evidence are the record of work done. Re-running `/to-issues` after a spec
   change adds new issue files (and marks obsoleted TODO ones DROPPED); it
@@ -110,10 +110,12 @@ applies it only with your approval, logging to `.claude/skills/FEEDBACK.md`.
   words; specs copy the entries they use, implementation names code after
   them.
 ## Rules that make this work on weak models (don't break these)
-- **Fresh context between steps.** The spec writer never sees the interview;
-  the critic never sees the session that wrote the spec; the verifier never
-  sees the sessions that wrote the code. Weak models are bad critics of work
-  sitting in their own context.
+- **Fresh context between steps.** The critic never sees the session that
+  wrote the spec; the verifier never sees the sessions that wrote the code.
+  Weak models are bad critics of work sitting in their own context. (One
+  deliberate exception: the spec MAY be written in the interview session —
+  but only from a re-read of DECISIONS.md on disk; anything remembered
+  from chat that isn't in the log must be logged as a decision first.)
 - **State lives in the files, not the conversation.** If a session dies,
   start fresh — the frontmatter tells the next session where things stand.
 - **Saving is a verified tool call.** Every skill must write with a real

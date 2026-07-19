@@ -1,6 +1,6 @@
 ---
 name: populate-template
-description: Reformats a completed decision log into a document template the user provides, marking every gap UNRESOLVED, then walks the user through a review. Use when the user has a decision log (e.g. from interview-me) and a template to fill from it, or wants a decision log turned into any document that is not a feature spec. For feature specs, use to-spec instead.
+description: Reformats a completed decision log into a document template the user provides, marking every gap UNRESOLVED, then walks the user through a review. Use when the user has a decision log (e.g. from interview-me) and a template to fill from it, or wants a decision log turned into any document that is not a feature spec. For feature specs, use spec-design instead.
 ---
 
 # SKILL: POPULATE TEMPLATE (generic binding)
@@ -23,6 +23,6 @@ This file only supplies the bindings the protocol needs.
   or say 'done'."
 ## Notes
 - One template, many logs: the template is reusable; never write into it.
-- The spec pipeline does not use this skill directly — to-spec binds the
-  same PROTOCOL.md to `specs/` with its own SPEC template and glossary
-  rules.
+- The spec pipeline does not use this skill directly — spec-design binds
+  the same PROTOCOL.md to `specs/` with its own SPEC template and
+  glossary rules.

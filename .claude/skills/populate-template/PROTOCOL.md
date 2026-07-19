@@ -2,7 +2,7 @@
 This is the reusable reformatting engine: it reorganizes a completed
 decision log (the kind interview-me and spec-design produce) into a target
 template, inventing nothing. It always runs through a binding — the
-populate-template skill (generic) or a wrapper like to-spec (spec
+populate-template skill (generic) or a wrapper like spec-design (spec
 pipeline) — which supplies four things:
 - SOURCE: the decision log to draw from, plus any auxiliary sources the
   binding names.
@@ -16,10 +16,20 @@ rules and self-checks of its own; they bind exactly like the ones here.
 You are a technical writer. Your only job is to reorganize the SOURCE's
 contents into the TEMPLATE. This is a formatting task, not a design task.
 ## Protocol
-1. Read SOURCE and TEMPLATE in full. Build OUTPUT as a copy of TEMPLATE:
-   every `<angle-bracket>` line is placeholder guidance — replace it with
-   content drawn from SOURCE under the hard rules. The guidance is
-   binding, like a form's field label.
+1. Read SOURCE and TEMPLATE in full. Build OUTPUT as a copy of TEMPLATE,
+   handling each line by its sigil (an indented line continues the sigil
+   line above it):
+   - `! <rule>` — a binding instruction for filling that section. Obey
+     it; never render it into OUTPUT.
+   - `? <coverage item>` — an interview anchor; never render it. Content
+     answering it lands here under the hard rules; if the log never
+     answered it, write `UNRESOLVED: <the exact question that needs
+     answering>` in its place.
+   - `<...>` — a substitution slot: replace it with the value it names.
+   - A section heading marked "(interview only)" — skip that whole
+     block; nothing in it renders (its decisions still land wherever
+     they fit).
+   - Anything else is literal structure: copy it as-is.
 2. Run the FINAL SELF-CHECK silently.
 3. SAVE the result to OUTPUT — saving means invoking your file-writing
    tool, not printing text. Then VERIFY: read the file back and confirm it
@@ -64,6 +74,10 @@ the binding provides must contain, or the protocol above cannot run:
   over from the log or newly exposed by writing the document.
 Use the TEMPLATE's sections exactly, in its order — never add, drop, or
 reorder sections.
+A TEMPLATE may embed `?` coverage items and "(interview only)" sections —
+that makes it an interview template, usable by the interview-me engine as
+its CHECKLIST. The sigil handling in step 1 already covers both kinds of
+line; embedded questions change nothing else about this protocol.
 ## EXAMPLE (log lines → output lines)
 Log contains:
     D14: Invoice deletion is a soft delete.
@@ -82,7 +96,9 @@ standard"), no silently keeping the superseded D3, no dropping D14.
 3. Scan your draft for any substantive statement with neither a (D<n>)
    citation nor an UNRESOLVED marker. Delete it or mark it — it is
    invented.
-4. Run every additional self-check your binding defines.
+4. Confirm every `!` rule in the template is satisfied, and that no `!`
+   or `?` line leaked into the draft.
+5. Run every additional self-check your binding defines.
 Only after all checks pass, save and print.
 ## REMINDER (read this last, follow it first)
 You may only reorganize, never invent. Every gap becomes UNRESOLVED. Every

@@ -41,8 +41,9 @@ supplies every answer; you only record and route.
 4. REPEAT until the list is done, then run the validator and paste output:
    `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
 5. HAND OFF — If any resolution added or superseded a decision that the spec
-   text cares about, say: "Decisions changed — re-run to-spec, then
-   spec-critique/to-issues as needed, in fresh conversations." Otherwise
+   text cares about, say: "Decisions changed — rewrite the spec via
+   spec-design, then spec-critique/to-issues as needed, in fresh
+   conversations." Otherwise
    say: "All clear — next: implement-issue in a fresh conversation."
 ## Hard rules
 - You resolve NOTHING yourself. Every answer comes from the user; an
@@ -53,7 +54,7 @@ supplies every answer; you only record and route.
   UNRESOLVED lines become RESOLVED lines, never deleted; issue files keep
   their IDs; only frontmatter status and an appended Unblocked line change.
 - Touch nothing that isn't a blocker: no code, no tests, no DONE issues, no
-  spec edits (the spec regenerates via to-spec).
+  spec edits (the spec regenerates via spec-design).
 ## EXAMPLE (one blocker, end to end)
 Scan finds: `B1 issue S01-I04 — BLOCKED: how long are soft-deleted invoices
 retained? (also UNRESOLVED in DECISIONS.md and SPEC section 13)`.
@@ -64,7 +65,7 @@ Decision Log; change the UNRESOLVED line to
 `RESOLVED (D23): How long are soft-deleted invoices retained?`; set S01-I04 to
 `status: TODO` with body line `Unblocked: retention is forever (D23)`; save,
 verify, validator PASS. Because D23 changes spec content, the hand-off is:
-"re-run to-spec in a fresh conversation."
+"rewrite the spec via spec-design in a fresh conversation."
 ## REMINDER (read this last, follow it first)
 One list, then one blocker per turn. The user answers; you record and route.
 New decisions are appended, UNRESOLVED becomes RESOLVED, BLOCKED becomes

@@ -15,16 +15,20 @@ about the topic at hand, and record them. You do not design, you do not
 implement, you do not fill gaps with your own ideas. The user is the
 judgment layer; you administer the checklist and keep the record.
 ## Protocol
-1. Read CHECKLIST in full. Its numbered areas drive the interview, and any
-   guidance lines under an area are binding instructions for how to run
-   that area (research to do first, question shape, what counts as done).
+1. Read CHECKLIST in full. Its areas drive the interview (see CHECKLIST
+   FORMAT below), and any `!` rules under an area are binding
+   instructions for how to run it (research to do first, question shape,
+   what counts as done).
 2. If LOG already exists with `status: IN PROGRESS` in its frontmatter,
    RESUME: read the whole file, re-print it, then continue from the first
    area that is not done. Otherwise create LOG from the LOG TEMPLATE
    below, filling in only what the user has actually said — the rest stays
    UNRESOLVED. If the user hasn't described the topic yet, ask them to, in
    a few sentences.
-3. Work through the areas top to bottom. For the current area, ask exactly
+3. Work through the areas in checklist order by default; when an answer
+   leads naturally into another area, you may follow it there — asking
+   order never affects the record, because the log is append-only and
+   flat. For the current area, ask exactly
    ONE question per turn. Prefer concrete questions ("What happens if the
    user submits the form twice?") over abstract ones ("What are your
    concurrency requirements?"). You may end the question with ONE clearly
@@ -38,7 +42,7 @@ judgment layer; you administer the checklist and keep the record.
    c. SAVE LOG with your file-writing tool, then VERIFY the save
       (see "Saving is a tool call" below).
    d. Re-print the ENTIRE LOG, then ask the next single question.
-5. An area is done when its checklist items each have a decision or the user
+5. An area is done when its `?` items each have a decision or the user
    has said it doesn't apply (record as `D<n>: <area item> — N/A per user`).
    If an area has taken 6 questions and still has gaps, record each remaining
    gap as `UNRESOLVED: <question>` and move to the next area — a visible gap
@@ -74,15 +78,23 @@ on your first turn and tell the user to copy the re-printed block themselves.
 - Keep the frontmatter accurate on every save. It is the file's status card:
   resumes (and any downstream consumers) read just those first lines to find
   the right file, so a stale `status:` or `areas_done:` misroutes them.
-## CHECKLIST FILE FORMAT
-A checklist is a markdown file of numbered areas:
-```markdown
-1. AREA NAME — what must be decided in this area.
-   Optional further lines: binding guidance for running this area.
-2. ...
-```
+## CHECKLIST FORMAT
+The CHECKLIST is an interview template — a markdown file whose sections
+carry the sigil grammar:
+- `? <coverage item>` — a decision that must exist for the area to be
+  done. Coverage, not a script: compose your own concrete questions and
+  follow-ups to cover it.
+- `! <rule>` — a binding instruction for running that area.
+- An indented line continues the sigil line above it.
+Every section containing `?` lines is an area, in document order; a
+section marked "(interview only)" is an area whose decisions appear only
+in the log, never in a populated document. Everything else — `<...>`
+slots and plain lines — belongs to the populate phase (the
+populate-template engine); never treat it as questions to ask or record.
+A template that is nothing but sections of `?` and `!` lines is fine:
+not every interview feeds a document.
 Optional frontmatter keys (a binding skill may honor or override them):
-`output:` where logs from this checklist go; `next_step:` a sentence to
+`output:` where logs from this template go; `next_step:` a sentence to
 append to the COMPLETION MESSAGE.
 ## LOG TEMPLATE (one template for every binding)
 ```markdown
@@ -131,5 +143,6 @@ Suggestion: the delete button is hidden entirely — yes/no, or your own answer?
 One question per turn. Never invent answers — mark UNRESOLVED. The log is
 append-only: corrections are new superseding lines, never edits. Save with a
 real tool call and verify after every answer — printing is not saving. Then
-re-print the full LOG verbatim. Per-area guidance in the checklist is
-binding. You extract and record; the user decides.
+re-print the full LOG verbatim. `?` items are coverage, not a script;
+`!` rules in the checklist are binding. You extract and record; the user
+decides.

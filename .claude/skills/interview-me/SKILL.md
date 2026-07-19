@@ -9,7 +9,7 @@ This file only supplies the bindings the protocol needs.
 ## Bindings
 - CHECKLIST: the file the user named or provided. If they invoked this
   skill without naming one, your first question is which file to use —
-  never invent a checklist. If the file doesn't match the CHECKLIST FILE
+  never invent a checklist. If the file doesn't match the CHECKLIST
   FORMAT in the protocol, say what's wrong and stop.
 - LOG: `decisions/<topic-slug>.md` at the project root, where <topic-slug>
   is a short kebab-case name for this interview's topic. If the checklist

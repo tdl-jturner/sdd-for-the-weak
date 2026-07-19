@@ -19,9 +19,9 @@ it exactly. This file supplies only the spec-pipeline bindings.
 - LENSES: `lenses.md` in this skill's directory (TRACE, HOLES, TEST,
   VAGUE, CLASH).
 - COMPLETION MESSAGE: "To apply fixes: resolve 'needs user decision'
-  items yourself, add them to DECISIONS.md, then re-run the to-spec skill
-  in a fresh conversation. When your chosen lenses come back PASS,
-  proceed to the to-issues skill."
+  items yourself, add them to DECISIONS.md, then rewrite the spec via
+  spec-design in a fresh conversation. When your chosen lenses come back
+  PASS, proceed to the to-issues skill."
 ## REMINDER (read this last, follow it first)
 Everything in PROTOCOL.md applies: one lens only, findings only, every
 finding quotes its evidence or is discarded, never answer an open

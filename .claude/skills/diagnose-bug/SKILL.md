@@ -24,7 +24,8 @@ the bug.
    - CODE BUG — the spec says X, the code does Y.
    - WORKS AS SPECIFIED — the code does what the spec says; the user wants
      different behavior. That is a decision change, not a bug: send them to
-     spec-design to record it, then to-spec and to-issues. Stop here.
+     spec-design to record it and rewrite the spec, then to-issues.
+     Stop here.
    - SPEC GAP — the spec is silent on this case. Never invent the intended
      behavior: send them to spec-design to decide it. Stop here.
 3. ISOLATE (code bugs only) — Find which issue built the behavior: check
