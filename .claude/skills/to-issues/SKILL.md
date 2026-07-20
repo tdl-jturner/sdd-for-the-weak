@@ -63,7 +63,7 @@ changed, never reused. Filename: `S<nn>-I<mm>-<short-slug>.md`, e.g.
   you claim exists is there. Only then report. Output a short summary (issue
   IDs + names), not the full file contents.
 - After saving, RUN the validator and paste its output:
-  `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<nn>-<slug>`
+  `python .claude/skills/to-issues/scripts/validate.py specs/S<nn>-<slug>`
   It deterministically checks numbering, statuses, and criterion
   coverage — rules in prompts are probabilistic, the script is not.
   Fix every failure and re-run until it prints PASS. Never report success

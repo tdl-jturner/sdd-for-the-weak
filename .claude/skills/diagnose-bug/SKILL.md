@@ -45,7 +45,7 @@ the bug.
    - Done when: that test and the full suite pass.
    Save with a real tool call, verify, then run the validator and paste its
    output:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
+   `python .claude/skills/to-issues/scripts/validate.py specs/S<n>-<slug>`
 5. STOP — Say: "Diagnosis recorded as S<n>-I<m>. Next: run implement-issue
    in a fresh conversation to fix it." Do not fix it yourself, even if the
    fix looks like one line. One-line fixes without their regression test are

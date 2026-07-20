@@ -34,6 +34,9 @@ with these bindings:
 - COMPLETION MESSAGE: "Interview complete. DECISIONS.md is saved. Say
   'write the spec' to continue here, or run spec-design in a fresh
   conversation."
+- Validator command (for the protocol's per-save gate) — run EXACTLY
+  this, verbatim, in your Bash tool, substituting only the folder name:
+  `python .claude/skills/interview-me/scripts/validate.py specs/S<nn>-<slug>/DECISIONS.md .claude/skills/spec-design/template.md`
 Also read the project-wide `specs/GLOSSARY.md` at the start (see below).
 ## GLOSSARY.md (project-wide shared language, at specs/GLOSSARY.md)
 Terms outlive features: "Invoice" must mean the same thing in S1 and S4,
@@ -64,14 +67,17 @@ exactly, with these bindings:
 - REVIEW MESSAGE: "SPEC.md is saved and verified. Please review it now —
   especially section 13 (Open Questions). Tell me any corrections, or say
   'done'. When you are satisfied, run spec-critique in a fresh
-  conversation (recommended lens order: TRACE, HOLES, CLASH, TEST,
-  VAGUE)."
+  conversation (recommended lens order: TRACE, HOLES, CLASH, TEST;
+  VAGUE is optional polish)."
 Same-session rule: even when the interview happened in this very
 conversation, first RE-READ DECISIONS.md from disk and build the spec
 ONLY from what that read-back contains. If you remember interview content
 that is not in the log, that is a missing decision: stop and ask the user
 to log it as a new D-line before it may appear in the spec — never write
 it into the spec from memory.
+Validator command (for the protocol's validator gate) — run EXACTLY
+this, verbatim, in your Bash tool, substituting only the folder name:
+`python .claude/skills/populate-template/scripts/validate.py specs/S<nn>-<slug>/DECISIONS.md specs/S<nn>-<slug>/SPEC.md .claude/skills/spec-design/template.md`
 ## REMINDER (read this last, follow it first)
 Route by frontmatter first. In INTERVIEW mode everything in the interview
 protocol applies: one question per turn, append-only log, save and
@@ -79,4 +85,5 @@ verify, re-print in full; undefined project nouns go to the glossary in
 the user's words. In POPULATE mode everything in the populate protocol
 applies: reorganize, never invent; obey every `!` rule; gaps become
 UNRESOLVED; the spec derives from the re-read file, never from
-conversation memory.
+conversation memory; the validator must PASS before the user is asked
+to review.

@@ -31,7 +31,7 @@ flowchart TD
 ```
 | Step | Skill | What it does | Context rule |
 |------|-------|--------------|--------------|
-| 1–2 | `spec-design` | Interview then spec, from one template with embedded coverage (`?`) and rules (`!`). One question per turn into DECISIONS.md, saved and verified every answer; then writes SPEC.md strictly from the re-read log and walks you through a review. | Interview resumable; spec may follow in-session or fresh |
+| 1–2 | `spec-design` | Interview then spec, from one template with embedded coverage (`?`) and rules (`!`). One question per turn into DECISIONS.md — saved, verified, and validator-checked every answer; then writes SPEC.md strictly from the re-read log, gated by its own validator, and walks you through a review. | Interview resumable; spec may follow in-session or fresh |
 | 3 | `spec-critique` | Adversarial review of SPEC.md against DECISIONS.md, one narrow lens at a time. | Fresh conversation, one lens per run |
 | 4 | `to-issues` | Decomposes SPEC.md into `issues/` — one file per issue (vertical slices with a bounding Files list), checked by a validator script. Sorted filenames are the build order. | Fresh conversation |
 | 5 | `implement-issue` | Implements ONE issue test-first (red-green-refactor), records evidence in the issue's frontmatter, validator must pass. | Fresh conversation **per issue** |
@@ -69,15 +69,18 @@ files above are the state that travels between steps; conversations are not.
    not saving). It inspects existing code for the Existing Code block, and
    grows `specs/GLOSSARY.md` from terms you define. When the interview
    completes, say "write the spec" (or run `/spec-design` fresh): it
-   re-reads DECISIONS.md from disk and writes SPEC.md strictly from the
-   file, then asks you to review. Corrections that are decisions get
+   re-reads DECISIONS.md from disk, writes SPEC.md strictly from the
+   file, and must show you a passing validator run
+   (`validate.py`, shipped in the populate-template skill)
+   before asking you to review. Corrections that are decisions get
    logged, never silently absorbed.
 2. Fresh session: `/spec-critique` with ONE lens (recommended order: TRACE,
-   HOLES, CLASH, TEST, VAGUE). Repeat per lens. Resolve findings, rewrite
-   the spec via `/spec-design`.
+   HOLES, CLASH, TEST; VAGUE is optional polish — the validator already
+   enforces the mechanical checks). Repeat per lens. Resolve findings,
+   rewrite the spec via `/spec-design`.
 3. Fresh session: `/to-issues`. Writes `issues/`, then must show
    you a passing validator run:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S01-<slug>`
+   `python .claude/skills/to-issues/scripts/validate.py specs/S01-<slug>`
 4. For EACH issue, fresh session: `/implement-issue`. Picks the next TODO by
    frontmatter, implements it test-first inside its Files list, records
    evidence, validator must pass. When none remain it points you at the

@@ -42,7 +42,7 @@ accepted proof of done.
 6. RECORD — Update your issue file's frontmatter: `status: DONE` and
    `evidence: <test names + the suite's summary line>`. Save and verify by
    reading the frontmatter back. Then run the validator and paste its output:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<nn>-<slug>`
+   `python .claude/skills/to-issues/scripts/validate.py specs/S<nn>-<slug>`
    It must print PASS — it deterministically catches ledger damage your own
    check would miss. Fix any failure before stopping.
 7. STOP — Say: "Issue S<nn>-I<mm> done. Next: run implement-issue in a fresh

@@ -36,6 +36,12 @@ contents into the TEMPLATE. This is a formatting task, not a design task.
    starts with the template's frontmatter. Never claim it is saved without
    verifying. (No file tools? Say so plainly and tell the user to copy the
    printed document themselves.)
+   Then run the validator that ships with this skill — in your Bash tool,
+   substituting only the three paths — and paste its output:
+   `python .claude/skills/populate-template/scripts/validate.py <SOURCE> <OUTPUT> <TEMPLATE>`
+   Every check must PASS before step 4. A FAIL means a hard rule was
+   broken: fix OUTPUT, re-save, re-run the validator. (A binding may spell
+   out the exact substituted command; use it verbatim.)
 4. Print the full document, then print the REVIEW MESSAGE and wait.
 5. Handle the user's review feedback, one item at a time:
    - Mechanical fix (typo, wrong section, formatting): fix it, re-save,

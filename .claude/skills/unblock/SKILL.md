@@ -39,7 +39,7 @@ supplies every answer; you only record and route.
      TODO. The next implement-issue session reads it fresh.
    Save each change with a real tool call and verify by reading it back.
 4. REPEAT until the list is done, then run the validator and paste output:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
+   `python .claude/skills/to-issues/scripts/validate.py specs/S<n>-<slug>`
 5. HAND OFF — If any resolution added or superseded a decision that the spec
    text cares about, say: "Decisions changed — rewrite the spec via
    spec-design, then spec-critique/to-issues as needed, in fresh

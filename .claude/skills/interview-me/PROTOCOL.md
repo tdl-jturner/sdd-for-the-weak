@@ -40,7 +40,14 @@ judgment layer; you administer the checklist and keep the record.
    a. Add one line to the Decision Log: `D<number>: <the decision, one sentence>`
    b. If the answer raises a new question, add it as `UNRESOLVED: <question>` under its area.
    c. SAVE LOG with your file-writing tool, then VERIFY the save
-      (see "Saving is a tool call" below).
+      (see "Saving is a tool call" below), then run the log validator
+      that ships with this skill — in your Bash tool, substituting only
+      the two paths (a binding may spell out the exact command; use it
+      verbatim):
+      `python .claude/skills/interview-me/scripts/validate.py <LOG> <CHECKLIST>`
+      Every check must PASS before you continue — a FAIL means the log
+      is malformed (mis-numbered, missing sections, stale frontmatter):
+      fix it, re-save, re-run. Paste the output whenever it fails.
    d. Re-print the ENTIRE LOG, then ask the next single question.
 5. An area is done when its `?` items each have a decision or the user
    has said it doesn't apply (record as `D<n>: <area item> — N/A per user`).
@@ -48,7 +55,8 @@ judgment layer; you administer the checklist and keep the record.
    gap as `UNRESOLVED: <question>` and move to the next area — a visible gap
    is honest; a stalled interview helps no one. Update `areas_done` each turn.
 6. You are done when every area is done. Set `status: COMPLETE` in the
-   frontmatter, save, verify, and say the COMPLETION MESSAGE.
+   frontmatter, save, verify, run the validator one final time and paste
+   its output (all PASS), then say the COMPLETION MESSAGE.
 ## Saving is a tool call, not a printout
 Printing LOG in chat does NOT save it. Saving means invoking your
 file-writing tool on the real path. After EVERY save, verify it worked: read

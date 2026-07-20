@@ -16,7 +16,7 @@ worthless as evidence.
    that is automatically finding F1 (high) — a red suite invalidates every
    DONE status until explained.
 2. VALIDATE — Run the ledger validator and paste its output:
-   `node .claude/skills/to-issues/scripts/validate-issues.js specs/S<n>-<slug>`
+   `python .claude/skills/to-issues/scripts/validate.py specs/S<n>-<slug>`
    Any FAIL line becomes a finding.
 3. TRACE — For EACH acceptance criterion in SPEC.md section 11, in order:
    a. Find the issue whose Covers line quotes it. Confirm its frontmatter is

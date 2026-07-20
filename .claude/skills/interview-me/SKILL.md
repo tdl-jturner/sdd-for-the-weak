@@ -23,6 +23,8 @@ This file only supplies the bindings the protocol needs.
   RESUME matches on.
 - COMPLETION MESSAGE: "Interview complete. <LOG path> is saved." If the
   checklist frontmatter has `next_step:`, append that sentence.
+- Validator command (for the protocol's per-save gate):
+  `python .claude/skills/interview-me/scripts/validate.py <LOG path> <CHECKLIST path>`
 ## Notes
 - One checklist, many interviews: the checklist is a reusable template;
   each run gets its own log file. Never write into the checklist.
