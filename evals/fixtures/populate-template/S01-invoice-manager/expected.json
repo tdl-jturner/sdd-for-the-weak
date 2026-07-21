@@ -1,0 +1,14 @@
+{
+  "checks": [
+    {
+      "name": "the unused Batch glossary entry is NOT copied into the spec",
+      "type": "forbidden",
+      "pattern": "Batch: a group of invoices"
+    },
+    {
+      "name": "the duplicate-number error message survives verbatim",
+      "type": "required",
+      "pattern": "Invoice number already exists"
+    }
+  ]
+}

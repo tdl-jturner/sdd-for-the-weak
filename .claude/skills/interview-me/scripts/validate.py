@@ -2,9 +2,12 @@
 """validate.py — deterministic check of an interview decision log.
 Dual use: the interview protocol runs it after every save as a gate;
 evals run it as a grader over saved logs.
-Usage: python validate.py <log.md> [checklist-or-template.md] [--json <out.json>]
+Usage: python validate.py <log.md> [checklist-or-template.md]
+       [expected.json] [--json <out.json>]
 With the checklist/template argument it also verifies the areas_done
-denominator matches the number of question-bearing areas.
+denominator matches the number of question-bearing areas. With an
+expected.json (evals only) it also runs fixture-specific checks:
+`required`/`forbidden` (regex over the log) and `min_decisions` (integer).
 Append-only discipline cannot be verified from one snapshot — that is an
 eval-harness check (diff successive saves), not a gate check.
 Self-contained: Python 3 standard library only."""
@@ -49,6 +52,7 @@ def main():
         sys.exit(2)
     log_path = args[0]
     checklist_path = args[1] if len(args) > 1 else None
+    expected_path = args[2] if len(args) > 2 else None
 
     try:
         with open(log_path, encoding="utf-8") as fh:
@@ -69,6 +73,15 @@ def main():
     check("frontmatter has status: IN PROGRESS|COMPLETE and areas_done: <done> of <total>",
           fm and status in ("IN PROGRESS", "COMPLETE") and areas_m,
           f'status: {status or "missing"}; areas_done {"ok" if areas_m else "missing or malformed"}' if fm else "no frontmatter found")
+
+    # no duplicate frontmatter keys — a weak model updating status/areas_done
+    # sometimes APPENDS a second line instead of editing in place, leaving two
+    # contradictory `status:` lines. Readers take the first and silently miss
+    # the newer value, so this must be a hard failure, not a shrug.
+    fm_keys = re.findall(r"^(\w[\w-]*):", fm.group(1), re.M) if fm else []
+    dup_keys = sorted({k for k in fm_keys if fm_keys.count(k) > 1})
+    check("frontmatter has no duplicate keys (status/areas_done edited in place, not appended)",
+          not dup_keys, f'duplicate key(s): {", ".join(dup_keys)}' if dup_keys else "keys unique")
 
     # with a checklist/template: denominator must match its area count
     if checklist_path and areas_m:
@@ -143,6 +156,23 @@ def main():
         check("status COMPLETE requires areas_done to cover every area",
               done_count == int(areas_m.group(2)),
               f"areas_done says {done_count} of {areas_m.group(2)}")
+
+    # fixture-specific expectations (evals only)
+    if expected_path:
+        with open(expected_path, encoding="utf-8") as fh:
+            exp = json.load(fh)
+        for e in exp.get("checks", []):
+            if e["type"] == "min_decisions":
+                n = int(e["count"])
+                check(e["name"], len(ids) >= n, f"log has {len(ids)} decisions, need >= {n}")
+                continue
+            flags = re.I if "i" in e.get("flags", "i") else 0
+            pat = re.compile(e["pattern"], flags)
+            m = pat.search(log)
+            if e["type"] == "required":
+                check(e["name"], m, "found" if m else f'pattern not found: /{e["pattern"]}/')
+            elif e["type"] == "forbidden":
+                check(e["name"], not m, f'forbidden match: "{m.group(0)}"' if m else "absent as required")
 
     finish(json_out)
 

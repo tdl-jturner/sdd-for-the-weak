@@ -1,0 +1,8 @@
+# Disposable eval run outputs (sandboxes are built outside the repo)
+spec-design-workspace/
+
+# Local machine config
+.claude/launch.json
+
+# Node
+node_modules/

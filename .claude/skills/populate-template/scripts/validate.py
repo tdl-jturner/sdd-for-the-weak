@@ -143,7 +143,10 @@ def main():
     # every decision lands (superseded IDs count once their superseder is cited)
     supersedes = {int(m.group(2)): int(m.group(1))
                   for m in re.finditer(r"^D(\d+):\s*supersedes\s+D(\d+)", log, re.M)}
-    cited = {int(m) for m in re.findall(r"\(D(\d+)[),\s]", out)}
+    # a citation is any D-number inside parentheses; compound citations
+    # like (D7, D12) count every ID
+    cited = {int(n) for grp in re.findall(r"\(([^()]*)\)", out)
+             for n in re.findall(r"\bD(\d+)\b", grp)}
 
     def landed(i):
         cur, hops = i, 0

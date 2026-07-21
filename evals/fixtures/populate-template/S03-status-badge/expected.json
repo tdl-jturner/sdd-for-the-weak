@@ -1,0 +1,21 @@
+{
+  "checks": [
+    {
+      "name": "the no-badge-set open question reaches section 13",
+      "type": "section_required",
+      "section": 13,
+      "pattern": "no badge"
+    },
+    {
+      "name": "the change-frequency open question reaches section 13",
+      "type": "section_required",
+      "section": 13,
+      "pattern": "how often|frequency|limit on"
+    },
+    {
+      "name": "the irrelevant Batch glossary entry is NOT copied into the spec",
+      "type": "forbidden",
+      "pattern": "Batch: a group of invoices"
+    }
+  ]
+}

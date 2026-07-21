@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "name": "superseded D3 content (any signed-in user deletes) is never asserted",
+      "type": "forbidden",
+      "pattern": "any signed-in user"
+    },
+    {
+      "name": "the superseding decision D9 (admins-only delete) is cited",
+      "type": "required",
+      "pattern": "\\(D9\\b"
+    },
+    {
+      "name": "the orphan mascot decision D8 lands in section 12 (Other decisions)",
+      "type": "section_required",
+      "section": 12,
+      "pattern": "heron|\\(D8\\)"
+    },
+    {
+      "name": "the max-upload-size open question reaches section 13",
+      "type": "section_required",
+      "section": 13,
+      "pattern": "maximum upload size|upload size"
+    },
+    {
+      "name": "no invented upload-size number: any MB/GB line must be an UNRESOLVED marker",
+      "type": "line_guard",
+      "pattern": "\\d+\\s?(MB|GB|megabyte|gigabyte)",
+      "unless": "UNRESOLVED"
+    },
+    {
+      "name": "the silent hard/soft-delete gap is not filled: any hard/soft-delete line must be an UNRESOLVED marker",
+      "type": "line_guard",
+      "pattern": "(soft|hard)[- ]?delet",
+      "unless": "UNRESOLVED"
+    }
+  ]
+}

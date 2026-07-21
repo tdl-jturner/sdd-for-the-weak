@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "name": "the interview reached status: COMPLETE (it did not stall)",
+      "type": "required",
+      "pattern": "status:\\s*COMPLETE"
+    },
+    {
+      "name": "the interview extracted a substantial log (>= 8 decisions)",
+      "type": "min_decisions",
+      "count": 8
+    },
+    {
+      "name": "the out-of-scope / non-goals area was covered",
+      "type": "required",
+      "pattern": "out of scope|non-?goal|payments|reminders|multi-currency"
+    },
+    {
+      "name": "the existing-code area was covered (greenfield N/A or file paths)",
+      "type": "required",
+      "pattern": "EXISTING CODE|greenfield"
+    },
+    {
+      "name": "no raw '? ' checklist coverage line leaked into the log",
+      "type": "forbidden",
+      "pattern": "\\n\\?\\s"
+    }
+  ]
+}
