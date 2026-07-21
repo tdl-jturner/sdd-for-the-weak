@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""run.py — run the spec-design evals end to end with the `claude` CLI.
+"""run.py — run the spec-design evals end to end with a coding-agent CLI.
 
 Two slices, one per half of the skill:
 
@@ -23,8 +23,10 @@ Examples:
   python evals/run.py --fixtures S02-file-uploads invoice-manager
   python evals/run.py --list
 
-Requirements: python 3.8+, and an authenticated `claude` CLI on PATH
-(`claude` then `/login`, or set ANTHROPIC_API_KEY).
+The agent CLI that gets driven is set by AGENT_CLI below (claude by default).
+
+Requirements: python 3.8+, and an authenticated agent CLI on PATH (for the
+default, run `claude` once and `/login`, or set an API key).
 """
 import argparse
 import glob
@@ -38,10 +40,15 @@ import tempfile
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Where the skills under test live, relative to the project root. The one
+# place this layout convention is spelled out — everything else derives from
+# it, so pointing the harness at a differently-organized agent is a one-line
+# change here.
+SKILLS_ROOT = ".claude/skills"
 SKILLS = ("spec-design", "populate-template", "interview-me")
-TEMPLATE = os.path.join(REPO, ".claude/skills/spec-design/template.md")
-POPULATE_VALIDATOR = os.path.join(REPO, ".claude/skills/populate-template/scripts/validate.py")
-INTERVIEW_VALIDATOR = os.path.join(REPO, ".claude/skills/interview-me/scripts/validate.py")
+TEMPLATE = os.path.join(REPO, SKILLS_ROOT, "spec-design/template.md")
+POPULATE_VALIDATOR = os.path.join(REPO, SKILLS_ROOT, "populate-template/scripts/validate.py")
+INTERVIEW_VALIDATOR = os.path.join(REPO, SKILLS_ROOT, "interview-me/scripts/validate.py")
 POPULATE_FIXTURES = os.path.join(REPO, "evals/fixtures/populate-template")
 INTERVIEW_FIXTURES = os.path.join(REPO, "evals/fixtures/interview-me")
 INTERVIEW_ANSWER = "Yes, go with your suggestion. Continue to the next question."
@@ -50,37 +57,42 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 
-# --- claude CLI -------------------------------------------------------------
+# --- agent CLI (the runner under test; claude by default) -------------------
+# The one region that knows which agent CLI is driven and how: AGENT_CLI is the
+# binary name, and the flags built in execute() are that CLI's. To point the
+# harness at a different agent runner, change these two — nothing else names it.
+AGENT_CLI = "claude"
 
-def claude_json(prompt, cwd, model, resume=None):
-    """Run one headless `claude` turn and return its parsed JSON result.
+
+def execute(prompt, cwd, model, resume=None):
+    """Run one headless turn of the agent CLI and return its parsed JSON result.
     Prompt goes on stdin (no arg-quoting headaches); shell=True so a Windows
-    `claude.cmd` shim resolves the same way it does in a terminal."""
-    cmd = f"claude -p --model {model} --permission-mode bypassPermissions --output-format json"
+    `.cmd` shim resolves the same way it does in a terminal."""
+    cmd = f"{AGENT_CLI} -p --model {model} --permission-mode bypassPermissions --output-format json"
     if resume:
         cmd += f" --resume {resume}"
     try:
         p = subprocess.run(cmd, shell=True, cwd=cwd, input=prompt,
                            capture_output=True, text=True, encoding="utf-8", errors="replace")
     except Exception as e:  # noqa: BLE001
-        return {"is_error": True, "result": f"failed to launch claude: {e}"}
+        return {"is_error": True, "result": f"failed to launch {AGENT_CLI}: {e}"}
     try:
         return json.loads(p.stdout)
     except Exception:  # noqa: BLE001
         return {"is_error": True,
-                "result": (p.stdout or p.stderr or "no output from claude").strip()[:500]}
+                "result": (p.stdout or p.stderr or f"no output from {AGENT_CLI}").strip()[:500]}
 
 
 def preflight(model):
-    if not shutil.which("claude"):
-        sys.exit("error: 'claude' CLI not on PATH")
-    print("checking claude auth ...")
-    d = claude_json("Reply with the single word READY.", REPO, model)
+    if not shutil.which(AGENT_CLI):
+        sys.exit(f"error: '{AGENT_CLI}' CLI not on PATH")
+    print(f"checking {AGENT_CLI} auth ...")
+    d = execute("Reply with the single word READY.", REPO, model)
     if d.get("is_error"):
-        print("error: the 'claude' CLI could not run a headless prompt.", file=sys.stderr)
+        print(f"error: the '{AGENT_CLI}' CLI could not run a headless prompt.", file=sys.stderr)
         if d.get("result"):
             print(f"  CLI says: {d['result']}", file=sys.stderr)
-        print("  Fix: run 'claude' once and '/login' (or set ANTHROPIC_API_KEY), then retry.", file=sys.stderr)
+        print(f"  Fix: authenticate the '{AGENT_CLI}' CLI (run it once and '/login', or set an API key), then retry.", file=sys.stderr)
         print(f"  Also check the model alias '{model}' is valid for your account.", file=sys.stderr)
         sys.exit(1)
     print("auth OK\n")
@@ -89,10 +101,10 @@ def preflight(model):
 # --- shared helpers ---------------------------------------------------------
 
 def copy_skills(sandbox):
-    dst = os.path.join(sandbox, ".claude", "skills")
+    dst = os.path.join(sandbox, SKILLS_ROOT)
     os.makedirs(dst, exist_ok=True)
     for sk in SKILLS:
-        shutil.copytree(os.path.join(REPO, ".claude/skills", sk), os.path.join(dst, sk))
+        shutil.copytree(os.path.join(REPO, SKILLS_ROOT, sk), os.path.join(dst, sk))
 
 
 def write_timing(rundir, result):
@@ -146,7 +158,7 @@ def find_log(sandbox):
 def populate_prompt(config, spec_folder):
     if config == "with_skill":
         return (
-            "Read .claude/skills/spec-design/SKILL.md and follow it EXACTLY. It routes by the "
+            f"Read {SKILLS_ROOT}/spec-design/SKILL.md and follow it EXACTLY. It routes by the "
             "DECISIONS.md frontmatter state; the decision log is COMPLETE, so you are in POPULATE "
             "mode. Follow every instruction it and the PROTOCOL.md files it references give you, "
             "including running the validator gate command and pasting the result.\n\n"
@@ -174,7 +186,7 @@ def run_populate(fx, idx, config, trial, args, ws, sandbox_root):
         copy_skills(sandbox)
 
     print(f">>> {ename} / {config} / trial {trial} ...")
-    result = claude_json(populate_prompt(config, fx), sandbox, args.model)
+    result = execute(populate_prompt(config, fx), sandbox, args.model)
     with open(os.path.join(rundir, "agent.json"), "w", encoding="utf-8") as fh:
         json.dump(result, fh, indent=2)
     write_timing(rundir, result)
@@ -211,7 +223,7 @@ def run_interview(fx, idx, args, ws, sandbox_root):
 
     print(f">>> {ename} : opening the interview ...")
     turn = 1
-    result = claude_json(open_prompt, sandbox, args.model)
+    result = execute(open_prompt, sandbox, args.model)
     json.dump(result, open(os.path.join(rundir, "turns", "turn-1.json"), "w", encoding="utf-8"), indent=2)
     sid = result.get("session_id", "")
     if not sid:
@@ -225,7 +237,7 @@ def run_interview(fx, idx, args, ws, sandbox_root):
     status = log_status(sandbox)
     while status != "COMPLETE" and turn < args.max_turns:
         turn += 1
-        r = claude_json(INTERVIEW_ANSWER, sandbox, args.model, resume=sid)
+        r = execute(INTERVIEW_ANSWER, sandbox, args.model, resume=sid)
         json.dump(r, open(os.path.join(rundir, "turns", f"turn-{turn}.json"), "w", encoding="utf-8"), indent=2)
         status = log_status(sandbox)
         print(f"\r    turn {turn}  (log status: {status or 'none'})      ", end="", flush=True)
@@ -309,7 +321,7 @@ def next_iteration():
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Run the spec-design evals with the claude CLI.",
+    ap = argparse.ArgumentParser(description="Run the spec-design evals with a coding-agent CLI.",
                                  formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
     ap.add_argument("--mode", choices=["populate", "interview", "all"], default="all",
                     help="which slice(s) to run (default: all)")
